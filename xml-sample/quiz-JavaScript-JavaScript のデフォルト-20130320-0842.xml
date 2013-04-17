@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/JavaScript のデフォルト</text>
+
+    </category>
+  </question>
+
+<!-- question: 49  -->
+  <question type="cloze">
+    <name>
+      <text>Cloze1</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<div style="padding: 1em; border: 1px dashed #FFB53A; color: black; background-color: #f9f9f9; font-family: monospace; font-size: 1.2em;">
+<p>This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer}</p>
+<p>and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer}</p>
+<p>and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.</p>
+<p>The multichoice question can also be shown in the vertical display of the standard moodle multiple choice. {2:MCV:1. Wrong answer#Feedback for this wrong answer~2. Another wrong answer#Feedback for the other wrong answer~=3. Correct answer#Feedback for correct answer~%50%4. Answer that gives half the credit#Feedback for half credit answer}</p>
+<p>Or in an horizontal display that is included here in a table {2:MCH:a. Wrong answer#Feedback for this wrong answer~b. Another wrong answer#Feedback for the other wrong answer~=c. Correct answer#Feedback for correct answer~%50%d. Answer that gives half the credit#Feedback for half credit answer}</p>
+<p>A shortanswer question where case must match. Write moodle in upper case letters {1:SHORTANSWER_C:moodle#Feedback for moodle in lower case ~=MOODLE#Feedback for MOODLE in upper case ~%50%Moodle#Feedback for only first letter in upper case}</p>
+<p>Note that addresses like www.moodle.org and smileys :-) all work as normal:</p>
+<p>a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}</p>
+<p>b) What grade would you give it? {3:NUMERICAL:=3:2}</p>
+</div>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>OK</p>]]></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <hint format="html">
+      <text><![CDATA[<p>HINT</p>]]></text>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>Hint2</p>]]></text>
+    </hint>
+  </question>
+
+<!-- question: 58  -->
+  <question type="multichoice">
+    <name>
+      <text>多肢選択問題1</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>多肢選択問題１</p>
+<p>次の中から選びなさい。</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>ぼよよん</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>123</answernumbering>
+    <correctfeedback format="html">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text></text>
+    </incorrectfeedback>
+    <answer fraction="100" format="html">
+      <text><![CDATA[<p>選択1</p>]]></text>
+      <feedback format="html">
+        <text><![CDATA[<p>OK</p>]]></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[<p>選択2</p>]]></text>
+      <feedback format="html">
+        <text><![CDATA[<p>NG</p>]]></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="html">
+      <text><![CDATA[<p>選択問題3</p>]]></text>
+      <feedback format="html">
+        <text><![CDATA[<p>NG</p>]]></text>
+      </feedback>
+    </answer>
+    <hint format="html">
+      <text><![CDATA[<p>これに決まってるだろ！</p>]]></text>
+    </hint>
+    <hint format="html">
+      <text><![CDATA[<p>ぷよぴよ</p>]]></text>
+    </hint>
+  </question>
+
+<!-- question: 59  -->
+  <question type="shortanswer">
+    <name>
+      <text>記述問題</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>あなたは誰ですか？</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>お前のことだろ！</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <usecase>0</usecase>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>坂井</text>
+      <feedback format="html">
+        <text><![CDATA[<p>ひゃっほう！</p>]]></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>知久</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <hint format="html">
+      <text><![CDATA[<p>君のこと！</p>]]></text>
+    </hint>
+  </question>
+
+<!-- question: 60  -->
+  <question type="truefalse">
+    <name>
+      <text>正誤問題1</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>私はバカです。</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>ほよ？</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="html">
+        <text><![CDATA[<p>そんなわけないだろ！</p>]]></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="html">
+        <text><![CDATA[<p>良く認識している！</p>]]></text>
+      </feedback>
+    </answer>
+  </question>
+
+</quiz>

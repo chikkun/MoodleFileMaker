@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/技術英語1 のデフォルト</text>
+
+    </category>
+  </question>
+
+<!-- question: 15  -->
+  <question type="truefalse">
+    <name>
+      <text>問題1</text>
+    </name>
+    <questiontext format="moodle_auto_format">
+      <text>1.Grant is buried in Grant's tomb. {FALSE # 鎌倉幕府を開いたのは源頼朝です。} {TRUE # ひゃっほう！}</text>
+    </questiontext>
+    <generalfeedback format="moodle_auto_format">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+
+<!-- question: 14  -->
+  <question type="truefalse">
+    <name>
+      <text>問題2</text>
+    </name>
+    <questiontext format="moodle_auto_format">
+      <text>1.The sun rises in the east. {FALSE # ぷわんうぷわん} {TRUE # ひゃっほう2！}</text>
+    </questiontext>
+    <generalfeedback format="moodle_auto_format">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="moodle_auto_format">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+
+</quiz>
