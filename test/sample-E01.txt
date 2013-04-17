@@ -1,0 +1,5 @@
+CoffeeScriptは飲むととても美味しい。
+ans:F
+
+Java Teaはとても美味しい。
+ans:T

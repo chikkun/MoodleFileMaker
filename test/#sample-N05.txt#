@@ -1,0 +1,6 @@
+config:{"type":"shortanswer", "category":"初級 のデフォルト", "name":"問", "commonFeedback":"お疲れ", "ngFeedback":"はずれ", "okFeedBack":"合格"}
+飲むととても美味しい飲み物は何ですか？
+answer:CoffeeScript
+
+淹れるとおいしい飲み物は何ですか？
+ans:Java

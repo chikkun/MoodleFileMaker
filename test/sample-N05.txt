@@ -1,0 +1,7 @@
+config:{"type":"multichoice", "category":"初級 のデフォルト", "name":"問", "commonFeedback":"お疲れ", "ngFeedback":"はずれ", "okFeedback":"合格"}
+飲むととても美味しい飲み物は何ですか？
+answer:CoffeeScript|PHP|Ruby|Python
+
+config:{"type":"mchoice", "category":"初級 のデフォルト", "name":"問", "commonFeedback":"お疲れ", "ngFeedback":"これ知らなきゃダメでしょう!", "okFeedback":"知ってて当然!"}
+淹れるとおいしい飲み物は何ですか？
+ans:Java|PHP|Python|Ruby

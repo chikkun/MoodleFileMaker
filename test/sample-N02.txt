@@ -1,0 +1,6 @@
+config:{"type":"TorF", "category":"初級 のデフォルト", "name":"問", "commonFeedback":"お疲れ", "ngFeedback":"はずれ", "okFeedback":"合格"}
+CoffeeScriptは飲むととても美味しい。
+ans:F
+
+Java Teaはとても美味しい。
+ans:T

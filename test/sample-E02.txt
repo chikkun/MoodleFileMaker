@@ -1,0 +1,7 @@
+config:
+CoffeeScriptは飲むととても美味しい。
+ans:F
+
+config:
+Java Teaはとても美味しい。
+ans:T

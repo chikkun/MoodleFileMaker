@@ -1,0 +1,65 @@
+config:{"type":"cloze", "category":"初級 のデフォルト", "name":"問題名", "commonFeedback":"お疲れさん", "ngFeedback":"はずれ", "okFeedback":"合格","hint":["最初のはグラミーショーで敷かれるやつ","2番目のは木を切るもの","3番目のはメラニン色素がない生き物"]}
+    # -*- encoding: utf-8 -*-
+    require '((redcarpet))'
+    require '((nokogiri|kanna|kanaduchi))'
+    require '((albino|wrong#だめっしょ1|wrong2#ダメっしょ2))'
+    require 'CodeRay'
+    class CodeRayify < Redcarpet::Render::HTML
+      def block_code(code, language)
+        CodeRay.scan(code, language).div
+      end
+    end
+    def markdown(text)
+      coderayified = CodeRayify.new(:filter_html => true, 
+                                    :hard_wrap => true)
+      options = {
+        :fenced_code_blocks => true,
+        :no_intra_emphasis => true,
+        :autolink => true,
+        :strikethrough => true,
+        :lax_html_blocks => true,
+        :superscript => true,
+        :tables => true
+      }
+      markdown_to_html = Redcarpet::Markdown.new(coderayified, options)
+      markdown_to_html.render(text)
+    end
+    
+    string = <<"END"
+    ~~~ javascript
+    puts 'hello world'
+    
+    | header 1 | header 2 |
+    | -------- | -------- |
+    | cell 1   | cell 2   |
+    | cell 3   | cell 4   |
+    END
+    
+    
+    print markdown(string)
+
+    use strict;
+    use warnings;
+    use Markdent::Simple::Document;
+     
+    my $parser = Markdent::Simple::Document->new;
+     
+    print $parser->markdown_to_html(
+    title => 'GFM Example',
+    dialect => 'GitHub',
+    markdown => do { local $/; <DATA> },
+    );
+     
+    __DATA__
+    # GitHub Flavored Markdown
+     
+    ## Syntax highlighting
+     
+    ```perl
+    use strict;
+    use warnings;
+    use 5.016;
+     
+    say 'Hello!';
+    ```
+    
