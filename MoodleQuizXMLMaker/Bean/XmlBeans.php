@@ -14,7 +14,7 @@ namespace Bean;
  * @package Bean
  *
  */
-class TorFBeans extends AbstractBeans {
+class XmlBeans {
 
     protected $beans = array();
     /**
