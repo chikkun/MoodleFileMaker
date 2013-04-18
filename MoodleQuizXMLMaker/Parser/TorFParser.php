@@ -13,10 +13,11 @@ require_once "AbstractParser.php";
 
 class TorFParser extends \Parser\AbstractParser
 {
-    public  $defaultOption = array("type" => "TorF",
+    public  $defaultOption = array(
+        "type" => "TorF",
         "category" => "ルート",
         "name" => "問",
-        "name" => "穴埋め問題",
+//        "name" => "穴埋め問題",
         "ngFeedback" => "Wrong!",
         "okFeedBack" => "OK!");
     private $qNumber;
@@ -26,6 +27,43 @@ class TorFParser extends \Parser\AbstractParser
     {
 
     }
+
+
+    public function xmlWrite() {
+        mb_http_output("UTF-8");
+
+        $writer = xmlwriter_open_memory();
+
+        xmlwriter_set_indent( $writer, 4 );
+        xmlwriter_set_indent_string( $writer, "\t" );
+        xmlwriter_start_document( $writer, "1.0", "UTF-8" );
+
+        xmlwriter_start_element( $writer, "root" );
+        xmlwriter_start_element( $writer, "aaaaaaaa" );
+        xmlwriter_start_element( $writer, "test" );
+
+        xmlwriter_write_attribute( $writer , "moge" , "mogemoge" );
+        xmlwriter_text( $writer, "ほげほげ" );
+
+        xmlwriter_end_element( $writer );
+
+        xmlwriter_start_element( $writer, "hage" );
+
+        xmlwriter_write_attribute( $writer , "moge" , "mogemoge" );
+        xmlwriter_text( $writer, "ほげほげ" );
+
+        xmlwriter_end_element( $writer );
+
+
+
+        xmlwriter_end_element( $writer );
+        xmlwriter_end_element( $writer );
+
+        xmlwriter_end_document( $writer );
+        echo xmlwriter_output_memory( $writer );
+    }
+
+
 
     public function parse($str)
     {
@@ -49,26 +87,6 @@ class TorFParser extends \Parser\AbstractParser
             }
         }
 
-    }
-
-    public function getQuestionNumber()
-    {
-        return $this->qNumber;
-    }
-
-    protected function mergeConfig($op, $op2)
-    {
-        //値があれば上書き無い場合は初期値で上書き
-        foreach ($op2 as $key => $val) {
-            if (isset($arr1[$key])) {
-                if (is_array($val)) {
-                    $this->mergeConfig($op[$key], $val);
-                } else {
-                    $op[$key] = $val;
-                }
-            }
-        }
-        return $op;
     }
 
     protected function checkConfig($json)

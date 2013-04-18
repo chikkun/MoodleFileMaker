@@ -57,8 +57,6 @@ abstract class AbstractParser {
      * データを読み込んで、MoodleのXML形式で問題を作成する準備をする。
      * 具体的には問題ビーンを配列に入れ込む。
      */
-    abstract public function parse($str);
-    abstract public function getQuestionNumber();
-    abstract protected  function checkConfig($str);
-    abstract protected  function mergeConfig($array1, $array2);
+    abstract public function parse($bean);
+    abstract protected  function checkConfig($json);
 }

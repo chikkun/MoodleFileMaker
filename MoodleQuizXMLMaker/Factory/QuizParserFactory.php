@@ -60,7 +60,7 @@ class QuizParserFactory {
     private function createBeans($kind) {
         switch (true){
             case preg_match("/TorF/i", $kind):
-                return new \Bean\TorFBeans();
+                return new \Bean\XmlBeans();
                 break;
             case preg_match("/cloze/i", $kind):
                 // 処理
