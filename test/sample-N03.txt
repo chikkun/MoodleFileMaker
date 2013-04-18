@@ -62,4 +62,3 @@ config:{"type":"cloze", "category":"初級 のデフォルト", "name":"問題�
      
     say 'Hello!';
     ```
-    

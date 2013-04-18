@@ -19,11 +19,12 @@ class QuizParserFactory {
 
     public function createParser($kind) {
         switch (true){
-            case preg_match("/TorF/i", $kind):
+            case preg_match("/truefalse/i", $kind):
                 return new \Parser\TorFParser();
                 break;
             case preg_match("/cloze/i", $kind):
-                // 処理
+                //暫定TODO
+                return new \Parser\TorFParser();
                 break;
             case preg_match("/shortanswer/i", $kind);
                 break;
@@ -37,13 +38,13 @@ class QuizParserFactory {
         return null;
     }
 
-    private function createBean($kind) {
+    public function createBean($kind) {
         switch (true){
-            case preg_match("/TorF/i", $kind):
+            case preg_match("/truefalse/i", $kind):
                 return new \Bean\TorFBean();
                 break;
             case preg_match("/cloze/i", $kind):
-                // 処理
+               // 処理
                 break;
             case preg_match("/shortanswer/i", $kind);
                 break;

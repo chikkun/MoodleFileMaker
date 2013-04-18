@@ -6,11 +6,10 @@
  * Time: 17:36
  * To change this template use File | Settings | File Templates.
  */
+require_once('../MoodleQuizXMLMaker/MoodleQuizXMLMaker.php');
 
 //namespace ParserTest;
 
-
-use Parser\TorFParser;
 
 class TorFParserTest extends \PHPUnit_Framework_TestCase {
 
@@ -19,7 +18,10 @@ class TorFParserTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testXmlWrite() {
-        $parser = new TorFParser();
+        $maker = new \Maker\MoodleQuizXMLMaker("sample.txt");
+        $factory = $maker->getFactory();
+
+        $parser = $factory->create("truefalse");
         $parser->xmlWrite();
     }
 }
