@@ -23,7 +23,8 @@ class QuizParserFactory {
                 return new \Parser\TorFParser();
                 break;
             case preg_match("/cloze/i", $kind):
-                // 処理
+                //暫定TODO
+                return new \Parser\TorFParser();
                 break;
             case preg_match("/shortanswer/i", $kind);
                 break;
@@ -37,33 +38,14 @@ class QuizParserFactory {
         return null;
     }
 
-    private function createBean($kind) {
+    public function createBean($kind) {
         switch (true){
-            case preg_match("/TorF/i", $kind):
+            case preg_match("/truefalse/i", $kind):
                 return new \Bean\TorFBean();
                 break;
             case preg_match("/cloze/i", $kind):
-                // 処理
-                break;
-            case preg_match("/shortanswer/i", $kind);
-                break;
-            case preg_match("/multichoice/i", $kind);
-                break;
-            case preg_match("/description/i", $kind);
-                break;
-            default:
-                throw new \Exception("Quiz kind not recognized!");
-        }
-        return null;
-    }
-
-    private function createBeans($kind) {
-        switch (true){
-            case preg_match("/TorF/i", $kind):
-                return new \Bean\TorFBeans();
-                break;
-            case preg_match("/cloze/i", $kind):
-                // 処理
+                // 暫定
+                return new \Bean\TorFBean();
                 break;
             case preg_match("/shortanswer/i", $kind);
                 break;
