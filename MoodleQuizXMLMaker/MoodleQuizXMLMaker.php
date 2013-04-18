@@ -22,6 +22,7 @@ class MoodleQuizXMLMaker
     private $qNumber = 0;
     private $factory;
     private $beans = array();
+
     /**
      * コンストラクター。
      * <ul>
@@ -205,5 +206,8 @@ class MoodleQuizXMLMaker
     {
         return $this->qNumber;
     }
-
+    public function getFactory()
+    {
+        return $this->factory;
+    }
 }
