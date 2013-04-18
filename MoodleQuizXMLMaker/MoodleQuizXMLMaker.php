@@ -123,7 +123,7 @@ class MoodleQuizXMLMaker
                         $config->type = "multichoice";
                         break;
                     case preg_match("/description/i", $qtype) || preg_match("/desc/i", $qtype):
-                        $config->type = "multichoice";
+                        $config->type = "description";
                         break;
                     default:
                         $erm = "Question NO." . $qn . "Question type(type) is not correct! type:" . $qtype . ":";
