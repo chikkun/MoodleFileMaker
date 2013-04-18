@@ -4,3 +4,5 @@ tmp*
 !/.gitignore
 *log
 *lock
+Zend
+vendor
