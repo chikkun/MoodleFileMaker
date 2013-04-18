@@ -1,17 +1,17 @@
 <?php
 namespace Maker;
 use \Exception\FileNotFoundException;
-/**
- * Created by JetBrains PhpStorm.
- * User: chikkun
- * Date: 2013/03/17
- * Time: 11:58
- * To change this template use File | Settings | File Templates.
- */
 require_once('../log4php/Logger.php');
 require_once('../Zend/Loader/StandardAutoloader.php');
+/**
+ * Class MoodleQuizXMLMaker
+ * @package Maker
+ */
 class MoodleQuizXMLMaker
 {
+    /**
+     * @var array 問題毎のConfig内容を入れる配列
+     */
     private $qConfigs = array();
     private $qContents = array();
     private $filename;
@@ -19,6 +19,15 @@ class MoodleQuizXMLMaker
     private $errorMessages = "";
     private $qNumber = 0;
 
+    /**
+     * コンストラクター。
+     * <ul>
+     * <li> Log4PHPの初期化とAutoloaderの設定を行う。</br>
+     * <li> クイズファイルから中身を読み取る。
+     * <li> 中身を問題やConfigにチェックしながら、パースする。
+     * </ul>
+     * @param string $file 問題ファイル名(パスも)
+     */
     public function __construct($file)
     {
         $this->filename = $file;
@@ -41,6 +50,12 @@ class MoodleQuizXMLMaker
         $config = $this->checkContents($contents);
     }
 
+    /**
+     * 与えられたファイル名を探し、その中身を返す。
+     * @param string $file ファイル名(パス含む)
+     * @return string ファイルの内容(そのまま)
+     * @throws \Exception\FileNotFoundException ファイルが見つからない場合にこの例外を送出
+     */
     private function getContents($file)
     {
         if (!file_exists($file)) {
@@ -50,11 +65,18 @@ class MoodleQuizXMLMaker
         return $buf;
     }
 
+    /**
+     * 問題の中身を\Bean\AbstractBeansに\Bean\AbstractBeanをセットする。</br>
+     * また、同時にconfigの内容をチェックし、最後まで探査した後に、最後にエラーが終わったら、
+     * 理由をログに書き込んで、何もしないで終了する(例外を送出)。
+     * @param $contents 問題ファイルの中身
+     * @throws \Exception\ConfigException configの記述誤りがあったらこの例外を送出
+     */
     private function checkContents($contents)
     {
-        //最後の行は削除
+        //最後の行は削除(次のsplitで空のレコードが出来ることを避ける)
         $str = preg_replace('/\n+$/', '', $contents);
-        //空行で分割
+        //空行で分割(2行でも同じ)
         $array = preg_split('/\n\n+/', $str);
         $this->qNumber = count($array);
         $cn = 0;
@@ -112,6 +134,7 @@ class MoodleQuizXMLMaker
                 //前のと同じだったら、定義されている一部のプロパティだけを書き換える
                 if($beforeType === $config->type){
                     $this->logger->debug("same type!");
+                    //$qnは1始まりなので、1つ前の配列は2を引く必要がある
                     $config = \Utility\UtilityStatics::mergeLargerToSmaller($config, $this->qConfigs[$qn - 2]);
                 }
                 array_push($this->qConfigs, $config);
@@ -140,7 +163,7 @@ class MoodleQuizXMLMaker
            throw new \Exception\ConfigException("Config error occur! See convert.log");
        }
 
-        var_dump($this->qContents);
+        return $this->qContents;
     }
 
     public function getQConfigs()
