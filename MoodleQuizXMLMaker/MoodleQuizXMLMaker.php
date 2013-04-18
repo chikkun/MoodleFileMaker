@@ -5,6 +5,8 @@ require_once('../log4php/Logger.php');
 require_once('../Zend/Loader/StandardAutoloader.php');
 /**
  * Class MoodleQuizXMLMaker
+ * 問題ファイルから、MoodleのXML形式の問題へ変換する
+ * 中心的なクラス。
  * @package Maker
  */
 class MoodleQuizXMLMaker
@@ -18,7 +20,8 @@ class MoodleQuizXMLMaker
     private $logger;
     private $errorMessages = "";
     private $qNumber = 0;
-
+    private $factory;
+    private $beans = array();
     /**
      * コンストラクター。
      * <ul>
@@ -45,7 +48,12 @@ class MoodleQuizXMLMaker
         $loader->register();
         $loader->registerNamespace('Exception', __DIR__  . '/Exception');
         $loader->register();
+        $loader->registerNamespace('Factory', __DIR__  . '/Factory');
+        $loader->register();
+        $loader->registerNamespace('Bean', __DIR__  . '/Bean');
+        $loader->register();
 
+        $this->factory = new \Factory\QuizParserFactory();
         $contents = $this->getContents($file);
         $config = $this->checkContents($contents);
     }
@@ -82,6 +90,7 @@ class MoodleQuizXMLMaker
         $cn = 0;
         $qn = 0;
         $beforeType = "";
+        $configExist = 0;
         foreach ($array as $val) {
             $qn++;
             if (preg_match("/^config:(.*?)\n(.*)$/si", $val, $ar)) {
@@ -131,26 +140,47 @@ class MoodleQuizXMLMaker
                         $this->errorMessages .= $erm;
                         continue;
                 }
+                $configExist = 1;
                 //前のと同じだったら、定義されている一部のプロパティだけを書き換える
                 if($beforeType === $config->type){
                     $this->logger->debug("same type!");
                     //$qnは1始まりなので、1つ前の配列は2を引く必要がある
-                    $config = \Utility\UtilityStatics::mergeLargerToSmaller($config, $this->qConfigs[$qn - 2]);
+                    $config = \Utility\UtilityStatics::mergeLargerToSmaller($config, $this->beans[$qn - 2]->getConfig());
                 }
-                array_push($this->qConfigs, $config);
                 $beforeType = $config->type;
-                array_push($this->qContents, $ar[2]);
             } else {
                 //config行がない場合は、前の問題と同じ
                 if( $qn > 1)
                 {
-                    //最初の行にconfigがないとエラーになる
-                    if (!empty($this->qConfigs)) {
-                        array_push($this->qConfigs, $this->qConfigs[$qn - 2]);
+                    //最初の行にconfigがないはずがない
+                    if (!empty($this->beans)) {
+                        //array_push($this->qConfigs, $this->qConfigs[$qn - 2]);
+                        $config = $this->beans[$qn - 2]->getConfig();
                     }
+
                 }
-                array_push($this->qContents, $val);
+                $configExist = 0;
             }
+            $bean = $this->factory->createBean($config->type);
+            $bean->setConfig($config);
+
+            $ans = "";//clozeには答えがない!
+            $quizText = "";
+            if($configExist === 0){
+                $ar = preg_split("/\n/", $val);
+            }
+            foreach ($ar as $v) {
+                if(preg_match("/ans|answer/i", $v)){
+                    $v = preg_replace("/ans|answer/i", "", $v);
+                    $ans = $v;
+                } else {
+                    $quizText .= $v;
+                }
+            }
+
+            $bean->setAnswer($ans);
+            $bean->setQuestion($quizText);
+            array_push($this->beans, $bean);
         }
         //config:という行が1つもないか、あっても中身がなかった
         if ($cn == 0) {
@@ -166,9 +196,9 @@ class MoodleQuizXMLMaker
         return $this->qContents;
     }
 
-    public function getQConfigs()
+    public function getBeans()
     {
-        return $this->qConfigs;
+        return $this->beans;
     }
 
     public function getQuestionNumber()
