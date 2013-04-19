@@ -42,7 +42,7 @@ class TorFParserTest extends \PHPUnit_Framework_TestCase
         $bean1->setAnswer("true");
 
         $parser = $factory->create("truefalse");
-        $xml = $parser->xmlWrite($bean1);
+        $xml = $parser->xmlWrite($bean0);
         echo $xml;
     }
 

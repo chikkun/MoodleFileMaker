@@ -78,7 +78,7 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_start_element($writer, "questiontext");
             xmlwriter_write_attribute($writer, "format", "html");
             xmlwriter_start_element($writer, "text");
-            xmlwriter_text($writer, '<![CDATA[<p>' . $bean->getQuestion() . '</p>]]>');
+            xmlwriter_write_cdata($writer, $bean->getQuestion() );
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
 
@@ -88,7 +88,7 @@ class TorFParser extends \Parser\AbstractParser
         if("" == $config->commonFeedback) {
             xmlwriter_text($writer, "");
         } else {
-            xmlwriter_text($writer, '<![CDATA[<p>' . $config->commonFeedback . '</p>]]>');
+            xmlwriter_write_cdata($writer, $config->commonFeedback);
         }
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
@@ -118,7 +118,7 @@ class TorFParser extends \Parser\AbstractParser
         if("" == $t_feedback) {
             xmlwriter_text($writer, "");
         } else {
-            xmlwriter_text($writer, '<![CDATA[<p>' . $t_feedback . '</p>]]>');
+            xmlwriter_write_cdata($writer, $t_feedback );
         }
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
@@ -137,7 +137,7 @@ class TorFParser extends \Parser\AbstractParser
         if("" == $f_feedback) {
             xmlwriter_text($writer, "");
         } else {
-            xmlwriter_text($writer, '<![CDATA[<p>' . $f_feedback . '</p>]]>');
+            xmlwriter_write_cdata($writer, $f_feedback );
         }
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
