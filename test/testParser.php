@@ -7,7 +7,7 @@ class StackTest extends PHPUnit_Framework_TestCase
     {
     }
 
-    public function testGetConfig()
+    public function testNormalFiles()
     {
         //Normal 1 正誤問題---2問目にはconfigなし
         $maker = new \Maker\MoodleQuizXMLMaker("sample.txt");
@@ -20,14 +20,15 @@ class StackTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('お疲れ', $configs[0]->getConfig()->commonFeedback);
         $this->assertEquals('はずれ', $configs[0]->getConfig()->ngFeedback);
         $this->assertEquals('合格', $configs[0]->getConfig()->okFeedback);
+        $this->assertEquals('合格', $configs[0]->getConfig()->okFeedback);
+        $this->assertEquals('CoffeeScriptは飲むととても美味しい。', $configs[0]->getQuestion());
         //2問目
-
         $this->assertEquals('truefalse', $configs[1]->getConfig()->type);
         $this->assertEquals('初級 のデフォルト', $configs[1]->getConfig()->category);
         $this->assertEquals('問', $configs[1]->getConfig()->name);
         $this->assertEquals('お疲れ', $configs[1]->getConfig()->commonFeedback);
         $this->assertEquals('はずれ', $configs[1]->getConfig()->ngFeedback);
-        $this->assertEquals('合格', $configs[1]->getConfig()->okFeedback);
+
 
         //Normal 2 正誤問題---2問目にもconfigあり
         $maker = new \Maker\MoodleQuizXMLMaker("sample-N01.txt");
@@ -93,7 +94,59 @@ class StackTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('お疲れ', $configs[1]->getConfig()->commonFeedback);
         $this->assertEquals('これ知らなきゃダメでしょう!', $configs[1]->getConfig()->ngFeedback);
         $this->assertEquals('知ってて当然!', $configs[1]->getConfig()->okFeedback);
+    }
 
+    /**
+     * @expectedException \Exception\ConfigException
+     */
+    public function testErrorConfig()
+    {
+        $maker = new \Maker\MoodleQuizXMLMaker("sample-E01.txt");
+        $configs = $maker->getBeans();
+    }
 
+    /**
+     * @expectedException \Exception\ConfigException
+     */
+    public function testErrorConfigEmpty()
+    {
+        $maker = new \Maker\MoodleQuizXMLMaker("sample-E02.txt");
+        $configs = $maker->getBeans();
+    }
+
+    /**
+     * @expectedException \Exception\ConfigException
+     */
+    public function testErrorConfigJsonBroken()
+    {
+        $maker = new \Maker\MoodleQuizXMLMaker("sample-E03.txt");
+        $configs = $maker->getBeans();
+    }
+
+    /**
+     * @expectedException \Exception\ConfigException
+     */
+    public function testErrorConfigNoType()
+    {
+        $maker = new \Maker\MoodleQuizXMLMaker("sample-E04.txt");
+        $configs = $maker->getBeans();
+    }
+
+    /**
+     * @expectedException \Exception\FileNotFoundException
+     */
+    public function testErrorFile()
+    {
+        $maker = new \Maker\MoodleQuizXMLMaker("NoExistFile.txt");
+        $configs = $maker->getBeans();
+    }
+
+    /**
+     * @expectedException \Exception\ConfigException
+     */
+    public function testErrorFirstLineHasNoType()
+    {
+        $maker = new \Maker\MoodleQuizXMLMaker("sample-E05.txt");
+        $configs = $maker->getBeans();
     }
 }

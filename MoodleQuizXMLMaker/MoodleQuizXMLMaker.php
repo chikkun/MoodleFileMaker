@@ -1,6 +1,7 @@
 <?php
 namespace Maker;
 use \Exception\FileNotFoundException;
+
 require_once('../log4php/Logger.php');
 require_once('../Zend/Loader/StandardAutoloader.php');
 /**
@@ -43,20 +44,20 @@ class MoodleQuizXMLMaker
         $loader = new \Zend\Loader\StandardAutoloader(array('autoregister_zf' => true));
         $loader->registerNamespace('Parser', __DIR__ . '/Parser');
         $loader->register();
-        $loader->registerNamespace('Root', __DIR__ );
+        $loader->registerNamespace('Root', __DIR__);
         $loader->register();
-        $loader->registerNamespace('Utility', __DIR__  . '/Utility');
+        $loader->registerNamespace('Utility', __DIR__ . '/Utility');
         $loader->register();
-        $loader->registerNamespace('Exception', __DIR__  . '/Exception');
+        $loader->registerNamespace('Exception', __DIR__ . '/Exception');
         $loader->register();
-        $loader->registerNamespace('Factory', __DIR__  . '/Factory');
+        $loader->registerNamespace('Factory', __DIR__ . '/Factory');
         $loader->register();
-        $loader->registerNamespace('Bean', __DIR__  . '/Bean');
+        $loader->registerNamespace('Bean', __DIR__ . '/Bean');
         $loader->register();
 
         $this->factory = new \Factory\QuizParserFactory();
         $contents = $this->getContents($file);
-        $config = $this->checkContents($contents);
+        $this->checkContents($contents);
     }
 
     /**
@@ -95,29 +96,44 @@ class MoodleQuizXMLMaker
         foreach ($array as $val) {
             $qn++;
             if (preg_match("/^config:(.*?)\n(.*)$/si", $val, $ar)) {
-                if(!empty($ar[1]))
-                {
+                if (!empty($ar[1])) {
                     $c = $ar[1];
                 } else {
-                //config:の後に何もない
-                    $erm = "Question NO." . $qn . "'config:' found, but config contents is empty";
+                    //config:の後に何もない
+                    $erm = "Question NO." . $qn . " 'config:' found, but config contents is empty";
                     $this->logger->error($erm);
                     $this->errorMessages .= $erm;
                     continue;
-                    //throw new Exception("'config:' found, but config contents is empty");
+                }
+                if(empty($ar[2])){
+                    //問題文がない
+                    $erm = "Question NO." . $qn . "No questions or/and No answer!";
+                    $this->logger->error($erm);
+                    $this->errorMessages .= $erm;
+                    continue;
                 }
                 $cn++;
                 $c = preg_replace("/config:/i", '', $c);
                 $config = json_decode($c);
                 //jsonをデコードしてNGだったら
                 if (empty($config)) {
-                    $erm = "Question NO." . $qn . "'config:' found, but config JSON is broken!";
+                    $erm = "Question NO." . $qn . " 'config:' found, but config JSON is broken!";
                     $this->logger->error($erm);
                     $this->errorMessages .= $erm;
                     continue;
                 }
+                if (isset($config->type)) {
+                    $qtype = $config->type;
+                } else if ($cn === 1) {
+                    $erm = "Question NO.1 config does not have type! Please write a type at the 1st line at least";
+                    $this->logger->error($erm);
+                    $this->errorMessages .= $erm;
+                    continue;
+                } else {
+                    $config->type = $this->beans[$qn - 2]->getConfig()->type;
+                    $qtype = $config->type;
+                }
 
-                $qtype = $config->type;
                 switch (true) {
                     case preg_match("/TorF/i", $qtype) || preg_match("/truefalse/i", $qtype):
                         //統一のため
@@ -136,43 +152,54 @@ class MoodleQuizXMLMaker
                         $config->type = "description";
                         break;
                     default:
-                        $erm = "Question NO." . $qn . "Question type(type) is not correct! type:" . $qtype . ":";
-                        $this->logger->error($erm);
-                        $this->errorMessages .= $erm;
-                        continue;
+                        break;
                 }
                 $configExist = 1;
                 //前のと同じだったら、定義されている一部のプロパティだけを書き換える
-                if($beforeType === $config->type){
-                    $this->logger->debug("same type!");
+                if ($beforeType === $config->type) {
                     //$qnは1始まりなので、1つ前の配列は2を引く必要がある
                     $config = \Utility\UtilityStatics::mergeLargerToSmaller($config, $this->beans[$qn - 2]->getConfig());
                 }
                 $beforeType = $config->type;
             } else {
                 //config行がない場合は、前の問題と同じ
-                if( $qn > 1)
-                {
+                if ($qn > 1 && count($this->beans) >= 1) {
                     //最初の行にconfigがないはずがない
-                    if (!empty($this->beans)) {
-                        //array_push($this->qConfigs, $this->qConfigs[$qn - 2]);
-                        $config = $this->beans[$qn - 2]->getConfig();
-                    }
-
+                    $config = $this->beans[$qn - 2]->getConfig();
+                } else if($qn === 1) {//最初の行からconfig行がない
+                    $erm = "Question NO.1 1st line must be config line!";
+                    $this->logger->error($erm);
+                    $this->errorMessages .= $erm;
+                    continue;
+                } else {//1行目も2行目もconfigがない
+                    $erm = "Question NO." . $qn . " does not have config line too, same as 1st question!";
+                    $this->logger->error($erm);
+                    $this->errorMessages .= $erm;
+                    continue;
                 }
                 $configExist = 0;
             }
-            $bean = $this->factory->createBean($config->type);
+            //対応するtypeがないと例外を送出
+            try {
+                $bean = $this->factory->createBean($config->type);
+            } catch (\Exception $e) {
+                $erm = "Question NO." . $qn . "Question type(type) is not correct! type:" . $config->type;
+                $this->logger->error($erm);
+                $this->errorMessages .= $erm;
+                continue;
+            }
             $bean->setConfig($config);
 
-            $ans = "";//clozeには答えがない!
+            $ans = ""; //clozeには答えがない!
             $quizText = "";
-            if($configExist === 0){
-                $ar = preg_split("/\n/", $val);
+            if ($configExist === 0) {//config行がないとsplitしていない
+                $arr = preg_split("/\n/", $val);
+            } else {//1行目はconfig行だから削除
+                $arr = preg_split("/\n/", $ar[2]);
             }
-            foreach ($ar as $v) {
-                if(preg_match("/ans|answer/i", $v)){
-                    $v = preg_replace("/ans|answer/i", "", $v);
+            foreach ($arr as $v) {
+                if (preg_match("/(ans|answer):/i", $v)) {
+                    $v = preg_replace("/(ans|answer)/i", "", $v);
                     $ans = $v;
                 } else {
                     $quizText .= $v;
@@ -189,12 +216,9 @@ class MoodleQuizXMLMaker
             $this->logger->error($erm);
             $this->errorMessages .= $erm;
         }
-       if(!empty($this->errorMessages))
-       {
-           throw new \Exception\ConfigException("Config error occur! See convert.log");
-       }
-
-        return $this->qContents;
+        if (!empty($this->errorMessages)) {
+            throw new \Exception\ConfigException("Config error occur! See convert.log");
+        }
     }
 
     public function getBeans()
@@ -206,6 +230,7 @@ class MoodleQuizXMLMaker
     {
         return $this->qNumber;
     }
+
     public function getFactory()
     {
         return $this->factory;
