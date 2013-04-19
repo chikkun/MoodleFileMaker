@@ -17,9 +17,7 @@ namespace Parser;
  * 抽象クラス.
  */
 abstract class AbstractParser {
-    private $qNumber;
-    private $qConfig = array();
-    public $defaultOption;
+    private $defaultOption;
 
     /*
     <question type="truefalse">
@@ -57,6 +55,5 @@ abstract class AbstractParser {
      * データを読み込んで、MoodleのXML形式で問題を作成する準備をする。
      * 具体的には問題ビーンを配列に入れ込む。
      */
-    abstract public function parse($bean);
-    abstract protected  function checkConfig($json);
+    abstract public function xmlWrite($beans);
 }

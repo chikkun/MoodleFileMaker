@@ -11,17 +11,23 @@ namespace Parser;
 
 require_once "AbstractParser.php";
 
+/**
+ * 真偽問題のXMLを作る。
+ * Class TorFParser
+ * @package Parser
+ */
 class TorFParser extends \Parser\AbstractParser
 {
-    public  $defaultOption = array(
-        "type" => "TorF",
+    private $defaultOption = array(
+        "type" => "truefalse",
         "category" => "ルート",
         "name" => "問",
-//        "name" => "穴埋め問題",
+        "defaultgrade" => "1.0000000",
+        "penalty" => "1.0000000",
+        "hidden" => "0",
+        "hint" => "no hint.",
         "ngFeedback" => "Wrong!",
-        "okFeedBack" => "OK!");
-    private $qNumber;
-    private $qConfig = array();
+        "okFeedback" => "OK!");
 
     public function __constructor()
     {
@@ -29,120 +35,129 @@ class TorFParser extends \Parser\AbstractParser
     }
 
 
-    public function xmlWrite() {
-        mb_http_output("UTF-8");
+    /**
+     * 真偽問題のXMLを作る。
+     * @param $beans       一つの問題を表すbeanの集まり。
+     * @return string      問題をXMLの書式で表した文字列を返す。
+     * @throws \Exception　answer が 'T' 'F' 'true' 'false' のいずれでもないときにエラーを返す。
+     */
+    public function xmlWrite($beans)
+    {
+        $firstConfig = $beans[0]->getConfig();
+        $firstConfig = \Utility\UtilityStatics::mergeLargerToSmaller($firstConfig, $this->defaultOption);
 
+        mb_http_output("UTF-8");
         $writer = xmlwriter_open_memory();
 
-        xmlwriter_set_indent( $writer, 4 );
-        xmlwriter_set_indent_string( $writer, "\t" );
-        xmlwriter_start_document( $writer, "1.0", "UTF-8" );
+        xmlwriter_set_indent($writer, 4);
+        xmlwriter_set_indent_string($writer, "\t");
+        xmlwriter_start_document($writer, "1.0", "UTF-8");
 
-        xmlwriter_start_element( $writer, "question" );
-        xmlwriter_write_attribute( $writer ,"type" , "truefalse" );
+        xmlwriter_start_element($writer, "quiz");
 
-        xmlwriter_start_element( $writer, "name" );
-        xmlwriter_start_element( $writer, "text" );
-        xmlwriter_text( $writer, "正誤問題1" );
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
+        xmlwriter_start_element($writer, "question");
+        xmlwriter_write_attribute($writer, "type", "category");
+        xmlwriter_start_element($writer, "category");
+        xmlwriter_start_element($writer, "text");
+        xmlwriter_text($writer, "\$course\$/$firstConfig->category");
+        xmlwriter_end_element($writer);
+        xmlwriter_end_element($writer);
+        xmlwriter_end_element($writer);
 
-        xmlwriter_start_element( $writer, "questiontext" );
-        xmlwriter_write_attribute( $writer ,"format" , "html" );
-        xmlwriter_start_element( $writer, "text" );
-        xmlwriter_text( $writer, "<![CDATA[<p>私はバカです。</p>]]>" );
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
+        foreach ($beans as $bean) {
+            $config = $bean->getConfig();
+            $config = \Utility\UtilityStatics::mergeLargerToSmaller($config, $this->defaultOption);
 
-        xmlwriter_start_element( $writer, "generalfeedback" );
-        xmlwriter_write_attribute( $writer ,"format" , "html" );
-        xmlwriter_start_element( $writer, "text" );
-        xmlwriter_text( $writer, "<![CDATA[<p>ほよ？</p>]]>" );
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
-
-        xmlwriter_start_element( $writer, "defaultgrade" );
-        xmlwriter_text( $writer, "1.0000000" );
-        xmlwriter_end_element( $writer );
-
-        xmlwriter_start_element( $writer, "penalty" );
-        xmlwriter_text( $writer, "1.0000000" );
-        xmlwriter_end_element( $writer );
-
-        xmlwriter_start_element( $writer, "hidden" );
-        xmlwriter_text( $writer, "0" );
-        xmlwriter_end_element( $writer );
-
-        xmlwriter_start_element( $writer, "answer" );
-        xmlwriter_write_attribute( $writer ,"fraction" , "100" );
-        xmlwriter_write_attribute( $writer ,"format" , "moodle_auto_format" );
-        xmlwriter_start_element( $writer, "text" );
-        xmlwriter_text( $writer, "true" );
-        xmlwriter_end_element( $writer );
-        xmlwriter_start_element( $writer, "feedback" );
-        xmlwriter_write_attribute( $writer ,"format" , "html" );
-        xmlwriter_start_element( $writer, "text" );
-        xmlwriter_text( $writer, "<![CDATA[<p>そんなわけないだろ！</p>]]>" );
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
-
-        xmlwriter_start_element( $writer, "answer" );
-        xmlwriter_write_attribute( $writer ,"fraction" , "100" );
-        xmlwriter_write_attribute( $writer ,"format" , "moodle_auto_format" );
-        xmlwriter_start_element( $writer, "text" );
-        xmlwriter_text( $writer, "false" );
-        xmlwriter_end_element( $writer );
-        xmlwriter_start_element( $writer, "feedback" );
-        xmlwriter_write_attribute( $writer ,"format" , "html" );
-        xmlwriter_start_element( $writer, "text" );
-        xmlwriter_text( $writer, "<![CDATA[<p>良く認識している！</p>]]>" );
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
-
-
-        xmlwriter_end_element( $writer );
-
-
-        xmlwriter_end_element( $writer );
-        xmlwriter_end_element( $writer );
-
-        xmlwriter_end_document( $writer );
-        echo xmlwriter_output_memory( $writer );
-    }
-
-
-
-    public function parse($str)
-    {
-        //最後の行は削除
-        $str = preg_replace('/\n+$/', '', $str);
-        //空行で分割
-        $array = preg_split('/\n\n/', $str);
-        $this->qNumber = count($array);
-        $cn = 0;
-        foreach ($array as $val) {
-            if (preg_match("/^config:(.+)\n/i", $val, $ar)) {
-                $cn++;
-                $c = $ar[0];
-                if (strlen($c) == 0) {
-                    throw new \Exception("config not found");
-                }
-                $c = preg_replace("/config:/i", '', $c);
-                $config = json_decode($c);
-                $config = $this->mergeConfig($config, $this->defaultOption);
-                array_push($this->qConfig, $config);
+            if (preg_match('/^T$|^true$/i', $bean->getAnswer())) {
+                $t_fraction = 100;
+                $t_feedback = $config->okFeedback;
+                $f_fraction = 0;
+                $f_feedback = $config->ngFeedback;
+            } else if (preg_match('/^F$|^false$/i', $bean->getAnswer())) {
+                $t_fraction = 0;
+                $t_feedback = $config->ngFeedback;
+                $f_fraction = 100;
+                $f_feedback = $config->okFeedback;
+            } else {
+                //errer
+                throw new \Exception("Answer must be \"T\" or \"F\" ,\"true\" or \"false\" !");
             }
-        }
 
+// 一つのbean ここから
+            xmlwriter_start_element($writer, "question");
+            xmlwriter_write_attribute($writer, "type", "truefalse");
+
+            xmlwriter_start_element($writer, "name");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_text($writer, "$config->name");
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+
+            xmlwriter_start_element($writer, "questiontext");
+            xmlwriter_write_attribute($writer, "format", "html");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_text($writer, '\<![CDATA[<p>' . $bean->getQuestion() . '</p>]]>');
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+
+            xmlwriter_start_element($writer, "generalfeedback");
+            xmlwriter_write_attribute($writer, "format", "html");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_text($writer, '<![CDATA[<p>' . $config->commonFeedback . '</p>]]>');
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+
+            xmlwriter_start_element($writer, "defaultgrade");
+            xmlwriter_text($writer, $config->defaultgrade);
+            xmlwriter_end_element($writer);
+
+            xmlwriter_start_element($writer, "penalty");
+            xmlwriter_text($writer, $config->penalty);
+            xmlwriter_end_element($writer);
+
+            xmlwriter_start_element($writer, "hidden");
+            xmlwriter_text($writer, $config->hidden);
+            xmlwriter_end_element($writer);
+            //true と答えたときの処理
+            xmlwriter_start_element($writer, "answer");
+            xmlwriter_write_attribute($writer, "fraction", $t_fraction);
+            xmlwriter_write_attribute($writer, "format", "moodle_auto_format");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_text($writer, "true");
+            xmlwriter_end_element($writer);
+            xmlwriter_start_element($writer, "feedback");
+            xmlwriter_write_attribute($writer, "format", "html");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_text($writer, '<![CDATA[<p>' . $t_feedback . '</p>]]>');
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+
+            //false と答えたときの処理
+            xmlwriter_start_element($writer, "answer");
+            xmlwriter_write_attribute($writer, "fraction", $f_fraction);
+            xmlwriter_write_attribute($writer, "format", "moodle_auto_format");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_text($writer, "false");
+            xmlwriter_end_element($writer);
+            xmlwriter_start_element($writer, "feedback");
+            xmlwriter_write_attribute($writer, "format", "html");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_text($writer, '<![CDATA[<p>' . $f_feedback . '</p>]]>');
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+
+
+            xmlwriter_end_element($writer);
+// 一つのbean ここまで
+        }
+        // quiz
+        xmlwriter_end_element($writer);
+
+        xmlwriter_end_document($writer);
+        return xmlwriter_output_memory($writer);
     }
 
-    protected function checkConfig($json)
-    {
-        foreach ($json as $key => $val) {
-
-        }
-    }
 }
 
