@@ -33,7 +33,7 @@ class QuizParserFactory {
             case preg_match("/description/i", $kind);
                 break;
             default:
-                throw new \Exception("Quiz kind not recognized!");
+                throw new \Exception("Quiz kind not recognized at making parser!");
         }
         return null;
     }
@@ -60,7 +60,7 @@ class QuizParserFactory {
                 return new \Bean\TorFBean();
                 break;
             default:
-                throw new \Exception("Quiz kind not recognized!");
+                throw new \Exception("Quiz kind not recognized  at making bean!");
         }
         return null;
     }

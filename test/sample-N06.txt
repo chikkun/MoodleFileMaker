@@ -12,13 +12,12 @@ config:{"ngFeedback":"PHPの「==」は型を無視して比較します。「==
 下のコードを実行すると、「false」が出力される。
 <?php
     $foo = "0";
-    
     if ($foo == 0) {
         echo "true";
     } else {
         echo "false";
     }
-?> 
+?>
 ans:F
 
 
@@ -26,13 +25,12 @@ config:{"ngFeedback":"PHPでは整数値を文字列と比較する際、文字�
 下のコードを実行すると、「true」が出力される。
 <?php
     $foo = "test";
-    
     if ($foo == 0) {
         echo "true";
     } else {
         echo "false";
     }
-?> 
+?>
 ans:T
 
 config:{"ngFeedback":"前問同様、文字列を数字で評価して0なので、trueにまります。", "okFeedback":"成長しましたねｗ"}
@@ -44,7 +42,7 @@ config:{"ngFeedback":"前問同様、文字列を数字で評価して0なので
     } else {
         echo "false";
     }
-?> 
+?>
 ans:t
 
 
@@ -86,7 +84,7 @@ config:{"ngFeedback":"文字列や数値、配列はリファレンス渡しで�
    $array[0] = 1;
    test($array);
    echo $array[0];
-?> 
+?>
 answer:F
 
 config:{"ngFeedback":"文字列や数値、配列はリファレンス渡しではないので、書き換えた結果が反映されません。"}
@@ -102,7 +100,7 @@ config:{"ngFeedback":"文字列や数値、配列はリファレンス渡しで�
    $h = new Hoge();
    test($h);
    echo $h->dog;
-?> 
+?>
 Ans:True
 
 config:{"ngFeedback":"PHPは、連想配列でも添え字以外に別途インデックスを持っていて、格納した順を覚えています。"}
