@@ -64,24 +64,4 @@ class QuizParserFactory {
         }
         return null;
     }
-
-    private function createBeans($kind) {
-        switch (true){
-            case preg_match("/TorF/i", $kind):
-                return new \Bean\XmlBeans();
-                break;
-            case preg_match("/cloze/i", $kind):
-                // 処理
-                break;
-            case preg_match("/shortanswer/i", $kind);
-                break;
-            case preg_match("/multichoice/i", $kind);
-                break;
-            case preg_match("/description/i", $kind);
-                break;
-            default:
-                throw new \Exception("Quiz kind not recognized!");
-        }
-        return null;
-    }
 }
