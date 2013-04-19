@@ -38,22 +38,71 @@ class TorFParser extends \Parser\AbstractParser
         xmlwriter_set_indent_string( $writer, "\t" );
         xmlwriter_start_document( $writer, "1.0", "UTF-8" );
 
-        xmlwriter_start_element( $writer, "root" );
-        xmlwriter_start_element( $writer, "aaaaaaaa" );
-        xmlwriter_start_element( $writer, "test" );
+        xmlwriter_start_element( $writer, "question" );
+        xmlwriter_write_attribute( $writer ,"type" , "truefalse" );
 
-        xmlwriter_write_attribute( $writer , "moge" , "mogemoge" );
-        xmlwriter_text( $writer, "ほげほげ" );
-
+        xmlwriter_start_element( $writer, "name" );
+        xmlwriter_start_element( $writer, "text" );
+        xmlwriter_text( $writer, "正誤問題1" );
+        xmlwriter_end_element( $writer );
         xmlwriter_end_element( $writer );
 
-        xmlwriter_start_element( $writer, "hage" );
-
-        xmlwriter_write_attribute( $writer , "moge" , "mogemoge" );
-        xmlwriter_text( $writer, "ほげほげ" );
-
+        xmlwriter_start_element( $writer, "questiontext" );
+        xmlwriter_write_attribute( $writer ,"format" , "html" );
+        xmlwriter_start_element( $writer, "text" );
+        xmlwriter_text( $writer, "<![CDATA[<p>私はバカです。</p>]]>" );
+        xmlwriter_end_element( $writer );
         xmlwriter_end_element( $writer );
 
+        xmlwriter_start_element( $writer, "generalfeedback" );
+        xmlwriter_write_attribute( $writer ,"format" , "html" );
+        xmlwriter_start_element( $writer, "text" );
+        xmlwriter_text( $writer, "<![CDATA[<p>ほよ？</p>]]>" );
+        xmlwriter_end_element( $writer );
+        xmlwriter_end_element( $writer );
+
+        xmlwriter_start_element( $writer, "defaultgrade" );
+        xmlwriter_text( $writer, "1.0000000" );
+        xmlwriter_end_element( $writer );
+
+        xmlwriter_start_element( $writer, "penalty" );
+        xmlwriter_text( $writer, "1.0000000" );
+        xmlwriter_end_element( $writer );
+
+        xmlwriter_start_element( $writer, "hidden" );
+        xmlwriter_text( $writer, "0" );
+        xmlwriter_end_element( $writer );
+
+        xmlwriter_start_element( $writer, "answer" );
+        xmlwriter_write_attribute( $writer ,"fraction" , "100" );
+        xmlwriter_write_attribute( $writer ,"format" , "moodle_auto_format" );
+        xmlwriter_start_element( $writer, "text" );
+        xmlwriter_text( $writer, "true" );
+        xmlwriter_end_element( $writer );
+        xmlwriter_start_element( $writer, "feedback" );
+        xmlwriter_write_attribute( $writer ,"format" , "html" );
+        xmlwriter_start_element( $writer, "text" );
+        xmlwriter_text( $writer, "<![CDATA[<p>そんなわけないだろ！</p>]]>" );
+        xmlwriter_end_element( $writer );
+        xmlwriter_end_element( $writer );
+        xmlwriter_end_element( $writer );
+
+        xmlwriter_start_element( $writer, "answer" );
+        xmlwriter_write_attribute( $writer ,"fraction" , "100" );
+        xmlwriter_write_attribute( $writer ,"format" , "moodle_auto_format" );
+        xmlwriter_start_element( $writer, "text" );
+        xmlwriter_text( $writer, "false" );
+        xmlwriter_end_element( $writer );
+        xmlwriter_start_element( $writer, "feedback" );
+        xmlwriter_write_attribute( $writer ,"format" , "html" );
+        xmlwriter_start_element( $writer, "text" );
+        xmlwriter_text( $writer, "<![CDATA[<p>良く認識している！</p>]]>" );
+        xmlwriter_end_element( $writer );
+        xmlwriter_end_element( $writer );
+        xmlwriter_end_element( $writer );
+
+
+        xmlwriter_end_element( $writer );
 
 
         xmlwriter_end_element( $writer );
