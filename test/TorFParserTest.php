@@ -20,6 +20,11 @@ class TorFParserTest extends \PHPUnit_Framework_TestCase
     {
     }
 
+    public function getDOM(){
+        $expected = new DOMDocument();
+        $expected->loadXML('<quiz><question></question></question></quiz>');
+    }
+
     public function testXmlWrite()
     {
         $maker = new \Maker\MoodleQuizXMLMaker("sample.txt");
@@ -32,16 +37,36 @@ class TorFParserTest extends \PHPUnit_Framework_TestCase
         $bean0->setAnswer("F");
 
         $bean1 = new \Bean\TorFBean();
+        $bean1->setConfig(json_decode('{"type":"TorF", "category":"初級 のデフォルト", "name":"問"}'));
+        $bean1->setQuestion("Java Teaはとても美味しい。");
+        $bean1->setAnswer("true");
+
+        $parser = $factory->create("truefalse");
+        $xml = $parser->xmlWrite($bean1);
+        echo $xml;
+    }
+
+    public function testXmlWriteErrer()
+    {
+        $maker = new \Maker\MoodleQuizXMLMaker("sample.txt");
+        $factory = $maker->getFactory();
+        //$beans = $maker->getBeans();
+
+        $bean0 = new \Bean\TorFBean();
+        $bean0->setConfig(json_decode('{"type":"TorF", "category":"初級 のデフォルト", "name":"問", "commonFeedback":"お疲れ", "ngFeedback":"はずれ", "okFeedback":"合格"}'));
+        $bean0->setQuestion("CoffeeScriptは飲むととても美味しい。");
+        $bean0->setAnswer("Fa");
+
+        $bean1 = new \Bean\TorFBean();
         $bean1->setConfig(json_decode('{"type":"TorF", "category":"初級 のデフォルト", "name":"問", "commonFeedback":"お疲れ", "ngFeedback":"はずれ", "okFeedback":"合格"}'));
         $bean1->setQuestion("Java Teaはとても美味しい。");
         $bean1->setAnswer("true");
 
-        $beans = array();
-        $beans[] = $bean0;
-        $beans[] = $bean1;
-
         $parser = $factory->create("truefalse");
-        $xml = $parser->xmlWrite($beans);
+        $xml = $parser->xmlWrite($bean1);
+        //$this->assertEquals();
         echo $xml;
     }
+
+
 }

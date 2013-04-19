@@ -19,15 +19,14 @@ require_once "AbstractParser.php";
 class TorFParser extends \Parser\AbstractParser
 {
     private $defaultOption = array(
-        "type" => "truefalse",
         "category" => "ルート",
         "name" => "問",
         "defaultgrade" => "1.0000000",
         "penalty" => "1.0000000",
         "hidden" => "0",
-        "hint" => "no hint.",
-        "ngFeedback" => "Wrong!",
-        "okFeedback" => "OK!");
+        "commonFeedback" => "",
+        "ngFeedback" => "",
+        "okFeedback" => "");
 
     public function __constructor()
     {
@@ -37,34 +36,17 @@ class TorFParser extends \Parser\AbstractParser
 
     /**
      * 真偽問題のXMLを作る。
-     * @param $beans       一つの問題を表すbeanの集まり。
+     * @param $bean        一つの問題を表すbean。
      * @return string      問題をXMLの書式で表した文字列を返す。
      * @throws \Exception　answer が 'T' 'F' 'true' 'false' のいずれでもないときにエラーを返す。
      */
-    public function xmlWrite($beans)
+    public function xmlWrite($bean)
     {
-        $firstConfig = $beans[0]->getConfig();
-        $firstConfig = \Utility\UtilityStatics::mergeLargerToSmaller($firstConfig, $this->defaultOption);
-
         mb_http_output("UTF-8");
         $writer = xmlwriter_open_memory();
 
         xmlwriter_set_indent($writer, 4);
         xmlwriter_set_indent_string($writer, "\t");
-        xmlwriter_start_document($writer, "1.0", "UTF-8");
-
-        xmlwriter_start_element($writer, "quiz");
-
-        xmlwriter_start_element($writer, "question");
-        xmlwriter_write_attribute($writer, "type", "category");
-        xmlwriter_start_element($writer, "category");
-        xmlwriter_start_element($writer, "text");
-        xmlwriter_text($writer, "\$course\$/$firstConfig->category");
-        xmlwriter_end_element($writer);
-        xmlwriter_end_element($writer);
-        xmlwriter_end_element($writer);
-
-        foreach ($beans as $bean) {
             $config = $bean->getConfig();
             $config = \Utility\UtilityStatics::mergeLargerToSmaller($config, $this->defaultOption);
 
@@ -96,14 +78,18 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_start_element($writer, "questiontext");
             xmlwriter_write_attribute($writer, "format", "html");
             xmlwriter_start_element($writer, "text");
-            xmlwriter_text($writer, '\<![CDATA[<p>' . $bean->getQuestion() . '</p>]]>');
+            xmlwriter_text($writer, '<![CDATA[<p>' . $bean->getQuestion() . '</p>]]>');
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
 
             xmlwriter_start_element($writer, "generalfeedback");
             xmlwriter_write_attribute($writer, "format", "html");
             xmlwriter_start_element($writer, "text");
+        if("" == $config->commonFeedback) {
+            xmlwriter_text($writer, "");
+        } else {
             xmlwriter_text($writer, '<![CDATA[<p>' . $config->commonFeedback . '</p>]]>');
+        }
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
 
@@ -118,6 +104,7 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_start_element($writer, "hidden");
             xmlwriter_text($writer, $config->hidden);
             xmlwriter_end_element($writer);
+
             //true と答えたときの処理
             xmlwriter_start_element($writer, "answer");
             xmlwriter_write_attribute($writer, "fraction", $t_fraction);
@@ -128,7 +115,11 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_start_element($writer, "feedback");
             xmlwriter_write_attribute($writer, "format", "html");
             xmlwriter_start_element($writer, "text");
+        if("" == $t_feedback) {
+            xmlwriter_text($writer, "");
+        } else {
             xmlwriter_text($writer, '<![CDATA[<p>' . $t_feedback . '</p>]]>');
+        }
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
@@ -143,7 +134,11 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_start_element($writer, "feedback");
             xmlwriter_write_attribute($writer, "format", "html");
             xmlwriter_start_element($writer, "text");
+        if("" == $f_feedback) {
+            xmlwriter_text($writer, "");
+        } else {
             xmlwriter_text($writer, '<![CDATA[<p>' . $f_feedback . '</p>]]>');
+        }
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
@@ -151,11 +146,7 @@ class TorFParser extends \Parser\AbstractParser
 
             xmlwriter_end_element($writer);
 // 一つのbean ここまで
-        }
-        // quiz
-        xmlwriter_end_element($writer);
 
-        xmlwriter_end_document($writer);
         return xmlwriter_output_memory($writer);
     }
 
