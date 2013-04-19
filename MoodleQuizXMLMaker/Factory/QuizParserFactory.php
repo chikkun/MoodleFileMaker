@@ -44,13 +44,20 @@ class QuizParserFactory {
                 return new \Bean\TorFBean();
                 break;
             case preg_match("/cloze/i", $kind):
-               // 処理
+               // 暫定TODO
+                return new \Bean\TorFBean();
                 break;
             case preg_match("/shortanswer/i", $kind);
+                // 暫定TODO
+                return new \Bean\TorFBean();
                 break;
             case preg_match("/multichoice/i", $kind);
+                // 暫定TODO
+                return new \Bean\TorFBean();
                 break;
             case preg_match("/description/i", $kind);
+                // 暫定TODO
+                return new \Bean\TorFBean();
                 break;
             default:
                 throw new \Exception("Quiz kind not recognized!");
