@@ -18,7 +18,7 @@ if(empty($options)){
 
 $filename = $options['f'];
 
-$maker = new MoodleQuizXMLMaker($filename);
+$maker = new \Maker\MoodleQuizXMLMaker($filename);
 
 $xml = $maker->makeXML();
 
