@@ -172,7 +172,13 @@ class MoodleQuizXMLMaker
                         break;
                 }
                 if(empty($this->parsers[$config->type])){
-                    $this->parsers[$config->type] = $this->factory->create($config->type);
+                    try {
+                        $this->parsers[$config->type] = $this->factory->create($config->type);
+                    } catch (\Exception $e) {
+                        $erm = "Question NO." . $qn . " 'config:' found, but wrong type was given!";
+                        $this->logger->error($erm);
+                        $this->errorMessages .= $erm;
+                    }
                 }
                 $configExist = 1;
                 //前のと同じだったら、定義されている一部のプロパティだけを書き換える
