@@ -10,7 +10,7 @@ config:{"type":"cloze", "category":"初級 のデフォルト", "name":"問題�
       end
     end
     def markdown(text)
-      coderayified = CodeRayify.new(:filter_html => true, 
+      coderayified = CodeRayify.new(:filter_html => true,
                                     :hard_wrap => true)
       options = {
         :fenced_code_blocks => true,
@@ -24,41 +24,31 @@ config:{"type":"cloze", "category":"初級 のデフォルト", "name":"問題�
       markdown_to_html = Redcarpet::Markdown.new(coderayified, options)
       markdown_to_html.render(text)
     end
-    
     string = <<"END"
     ~~~ javascript
     puts 'hello world'
-    
     | header 1 | header 2 |
     | -------- | -------- |
     | cell 1   | cell 2   |
     | cell 3   | cell 4   |
     END
-    
-    
     print markdown(string)
 
     use strict;
     use warnings;
     use Markdent::Simple::Document;
-     
     my $parser = Markdent::Simple::Document->new;
-     
     print $parser->markdown_to_html(
     title => 'GFM Example',
     dialect => 'GitHub',
     markdown => do { local $/; <DATA> },
     );
-     
     __DATA__
     # GitHub Flavored Markdown
-     
     ## Syntax highlighting
-     
     ```perl
     use strict;
     use warnings;
     use 5.016;
-     
     say 'Hello!';
     ```

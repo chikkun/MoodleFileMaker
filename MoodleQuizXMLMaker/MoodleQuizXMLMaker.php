@@ -15,8 +15,7 @@ class MoodleQuizXMLMaker
     /**
      * @var array 問題毎のConfig内容を入れる配列
      */
-    private $qConfigs = array();
-    private $qContents = array();
+    private $parsers = array();
     private $filename;
     private $logger;
     private $errorMessages = "";
@@ -58,6 +57,24 @@ class MoodleQuizXMLMaker
         $this->factory = new \Factory\QuizParserFactory();
         $contents = $this->getContents($file);
         $this->checkContents($contents);
+    }
+
+    /**
+     * @param $parser
+     */
+    public function makeXML()
+    {
+        $xml = "";
+        foreach ($this->beans as $bean) {
+            try {
+                $xml .= $this->parsers[$bean->getConfig()->type]->xmlWrite($bean);
+            } catch (Exception $e) {
+                $erm = $e->getMessage();
+                $this->logger->error($erm);
+                throw $e;
+            }
+        }
+        return $xml;
     }
 
     /**
@@ -105,7 +122,7 @@ class MoodleQuizXMLMaker
                     $this->errorMessages .= $erm;
                     continue;
                 }
-                if(empty($ar[2])){
+                if (empty($ar[2])) {
                     //問題文がない
                     $erm = "Question NO." . $qn . "No questions or/and No answer!";
                     $this->logger->error($erm);
@@ -154,6 +171,9 @@ class MoodleQuizXMLMaker
                     default:
                         break;
                 }
+                if(empty($this->parsers[$config->type])){
+                    $this->parsers[$config->type] = $this->factory->create($config->type);
+                }
                 $configExist = 1;
                 //前のと同じだったら、定義されている一部のプロパティだけを書き換える
                 if ($beforeType === $config->type) {
@@ -166,12 +186,12 @@ class MoodleQuizXMLMaker
                 if ($qn > 1 && count($this->beans) >= 1) {
                     //最初の行にconfigがないはずがない
                     $config = $this->beans[$qn - 2]->getConfig();
-                } else if($qn === 1) {//最初の行からconfig行がない
+                } else if ($qn === 1) { //最初の行からconfig行がない
                     $erm = "Question NO.1 1st line must be config line!";
                     $this->logger->error($erm);
                     $this->errorMessages .= $erm;
                     continue;
-                } else {//1行目も2行目もconfigがない
+                } else { //1行目も2行目もconfigがない
                     $erm = "Question NO." . $qn . " does not have config line too, same as 1st question!";
                     $this->logger->error($erm);
                     $this->errorMessages .= $erm;
@@ -192,16 +212,21 @@ class MoodleQuizXMLMaker
 
             $ans = ""; //clozeには答えがない!
             $quizText = "";
-            if ($configExist === 0) {//config行がないとsplitしていない
+            if ($configExist === 0) { //config行がないとsplitしていない
                 $arr = preg_split("/\n/", $val);
-            } else {//1行目はconfig行だから削除
+            } else { //1行目はconfig行だから削除
                 $arr = preg_split("/\n/", $ar[2]);
             }
+            $num = 0;
             foreach ($arr as $v) {
+                $num++;
                 if (preg_match("/(ans|answer):/i", $v)) {
-                    $v = preg_replace("/(ans|answer)/i", "", $v);
+                    $v = preg_replace("/(ans|answer):/i", "", $v);
                     $ans = $v;
                 } else {
+                    if ($num !== 1) {
+                        $quizText .= "\n";
+                    }
                     $quizText .= $v;
                 }
             }
