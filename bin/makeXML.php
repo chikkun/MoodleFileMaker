@@ -9,7 +9,7 @@
 
 require_once('../MoodleQuizXMLMaker/MoodleQuizXMLMaker.php');
 
-$options = getopt('f:');
+$options = getopt('nf:');
 
 if(empty($options)){
     echo "Option '-f filename' is required!\n";
@@ -18,8 +18,11 @@ if(empty($options)){
 
 $filename = $options['f'];
 
+$markdown = 1;
 $maker = new \Maker\MoodleQuizXMLMaker($filename);
-
-$xml = $maker->makeXML();
+if(array_key_exists('n', $options)){
+    $markdown = 0;
+}
+$xml = $maker->makeXML($markdown);
 
 echo $xml;

@@ -62,12 +62,12 @@ class MoodleQuizXMLMaker
     /**
      * @param $parser
      */
-    public function makeXML()
+    public function makeXML($markdown)
     {
         $xml = "";
         foreach ($this->beans as $bean) {
             try {
-                $xml .= $this->parsers[$bean->getConfig()->type]->xmlWrite($bean);
+                $xml .= $this->parsers[$bean->getConfig()->type]->xmlWrite($bean, $markdown);
             } catch (Exception $e) {
                 $erm = $e->getMessage();
                 $this->logger->error($erm);
