@@ -10,6 +10,7 @@
 namespace Parser;
 
 require_once "AbstractParser.php";
+require_once "../Beautify/beautify.php";
 
 /**
  * 真偽問題のXMLを作る。
@@ -40,7 +41,7 @@ class TorFParser extends \Parser\AbstractParser
      * @return string      問題をXMLの書式で表した文字列を返す。
      * @throws \Exception　answer が 'T' 'F' 'true' 'false' のいずれでもないときにエラーを返す。
      */
-    public function xmlWrite($bean)
+    public function xmlWrite($bean, $markdown)
     {
         mb_http_output("UTF-8");
         $writer = xmlwriter_open_memory();
@@ -78,7 +79,14 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_start_element($writer, "questiontext");
             xmlwriter_write_attribute($writer, "format", "html");
             xmlwriter_start_element($writer, "text");
-            xmlwriter_write_cdata($writer, $bean->getQuestion() );
+            $text = $bean->getQuestion();
+            if($markdown === 1){
+                $text = preg_replace("/\n/s", "\n\n", $text);
+                $text = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $text);
+                $text = preg_replace("/```+/s", "\n~~~\n\n", $text);
+                $text = beautify($text);
+            }
+            xmlwriter_write_cdata($writer, $text );
             xmlwriter_end_element($writer);
             xmlwriter_end_element($writer);
 
@@ -88,6 +96,13 @@ class TorFParser extends \Parser\AbstractParser
         if("" == $config->commonFeedback) {
             xmlwriter_text($writer, "");
         } else {
+            $cfeed = $config->commonFeedback;
+            if($markdown === 1){
+                $cfeed = preg_replace("/\n/s", "\n\n", $cfeed);
+                $cfeed = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $cfeed);
+                $cfeed = preg_replace("/```+/s", "\n~~~\n\n", $cfeed);
+                $cfeed = beautify($cfeed);
+            }
             xmlwriter_write_cdata($writer, $config->commonFeedback);
         }
             xmlwriter_end_element($writer);
@@ -118,6 +133,12 @@ class TorFParser extends \Parser\AbstractParser
         if("" == $t_feedback) {
             xmlwriter_text($writer, "");
         } else {
+            if($markdown === 1){
+                $t_feedback = preg_replace("/\n/s", "\n\n", $t_feedback);
+                $t_feedback = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $t_feedback);
+                $t_feedback = preg_replace("/```+/s", "\n~~~\n\n", $t_feedback);
+                $t_feedback = beautify($t_feedback);
+            }
             xmlwriter_write_cdata($writer, $t_feedback );
         }
             xmlwriter_end_element($writer);
@@ -137,6 +158,12 @@ class TorFParser extends \Parser\AbstractParser
         if("" == $f_feedback) {
             xmlwriter_text($writer, "");
         } else {
+            if($markdown === 1){
+                $f_feedback = preg_replace("/\n/s", "\n\n", $f_feedback);
+                $f_feedback = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $f_feedback);
+                $f_feedback = preg_replace("/```+/s", "\n~~~\n\n", $f_feedback);
+                $f_feedback = beautify($f_feedback);
+            }
             xmlwriter_write_cdata($writer, $f_feedback );
         }
             xmlwriter_end_element($writer);

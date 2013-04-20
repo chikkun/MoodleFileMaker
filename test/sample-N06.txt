@@ -1,15 +1,18 @@
 config:{"type":"TorF", "category":"PHP", "name":"問", "commonFeedback":"お疲れ", "ngFeedback":"PHPにはifやforのブロックスコープがありません。", "okFeedback":"合格"}
 PHPにおいて、if文の中で使った変数は外でも参照できる(下のechoで「inside if」が出力される)。
+```php
 <?php
     if(true) {
         $flag = "inside if";
     }
     echo $flag."\n";
 ?>
+```
 ans:t
 
 config:{"ngFeedback":"PHPの「==」は型を無視して比較します。「===」は型も同じ時のみtrueになります。"}
 下のコードを実行すると、「false」が出力される。
+```php
 <?php
     $foo = "0";
     if ($foo == 0) {
@@ -18,11 +21,13 @@ config:{"ngFeedback":"PHPの「==」は型を無視して比較します。「==
         echo "false";
     }
 ?>
+```
 ans:F
 
 
 config:{"ngFeedback":"PHPでは整数値を文字列と比較する際、文字列が数値に変換されますが、有効な数字データから始まらない場合は0となります。"}
 下のコードを実行すると、「true」が出力される。
+```php
 <?php
     $foo = "test";
     if ($foo == 0) {
@@ -31,10 +36,12 @@ config:{"ngFeedback":"PHPでは整数値を文字列と比較する際、文字�
         echo "false";
     }
 ?>
+```
 ans:T
 
 config:{"ngFeedback":"前問同様、文字列を数字で評価して0なので、trueにまります。", "okFeedback":"成長しましたねｗ"}
 配列にその値が存在するかどうかを判定する関数「in_array」を使った下のコードを実行すると、「true」が出力される。
+```php
 <?php
     $str_array = array('a', 'b', 'c');
     if (in_array(0, $str_array)) {
@@ -43,12 +50,14 @@ config:{"ngFeedback":"前問同様、文字列を数字で評価して0なので
         echo "false";
     }
 ?>
+```
 ans:t
 
 
 
 config:{"ngFeedback":"前問同様、colorが0に変換され、$noodles['udon'][0]になり、文字列whiteの最初の文字が出力されます(warningが出ますが)。"}
 下のコードを実行すると、nullが表示されます。
+```php
 <?php
     $noodles = array(
         'udon' => 'white',
@@ -57,10 +66,12 @@ config:{"ngFeedback":"前問同様、colorが0に変換され、$noodles['udon']
     );
     echo $noodles['udon']['color'] . "\n";
 ?>
+```
 ans:f
 
 config:{"ngFeedback":"連想配列のキーの存在確認にはissetは使えません(→array_key_exists)。"}
 下のコードを実行すると、trueが表示されます。
+```php
 <?php
     $noodles = array(
         'udon' => 'white',
@@ -73,10 +84,12 @@ config:{"ngFeedback":"連想配列のキーの存在確認にはissetは使え�
         echo "false\n";
     }
 ?>
+```
 ans:FaLse
 
 config:{"ngFeedback":"文字列や数値、配列はリファレンス渡しではないので、書き換えた結果が反映されません。"}
 下のコードを実行すると、「2」が出力される。
+```php
 <?php
    function test($array){
       $array[0] = 2;
@@ -85,10 +98,12 @@ config:{"ngFeedback":"文字列や数値、配列はリファレンス渡しで�
    test($array);
    echo $array[0];
 ?>
+```
 answer:F
 
 config:{"ngFeedback":"文字列や数値、配列はリファレンス渡しではないので、書き換えた結果が反映されません。"}
 下のコードを実行すると、「bowbow」が出力される。
+```php
 <?php
     class Hoge{
         public $dog = "wanwan";
@@ -101,10 +116,12 @@ config:{"ngFeedback":"文字列や数値、配列はリファレンス渡しで�
    test($h);
    echo $h->dog;
 ?>
+```
 Ans:True
 
 config:{"ngFeedback":"PHPは、連想配列でも添え字以外に別途インデックスを持っていて、格納した順を覚えています。"}
 PHPの連想配列は順番が保証されている。例えば、次のコードを実行すると、「key1:val1→key2:val2→key3:val3」の順番で出力される。
+```php
 <?php
     $hash['key1'] = 'val1';
     $hash['key2'] = 'val2';
@@ -113,10 +130,13 @@ PHPの連想配列は順番が保証されている。例えば、次のコー�
         print $key . ":" . $value . "\n";
     }
 ?>
+```
 Answer:TRUE
 
-config:{"ngFeedback":"PHPは、添え字が数字の配列でも、結局全く前問の連想配列と同じ扱いで、入れた順を覚えています。"}
-例えば、次のコードを実行すると、「0:え→1:う→2:い→3:あ」の順番で出力される。
+config:{"ngFeedback":"PHPは、添え字が数字の配列でも、結局全く前問の連想配列と同じ扱いで、入れた順を覚えています。\nちょっとおかしな感じがしますｗ"}
+例えば、次のコードを実行すると、
+「0:え→1:う→2:い→3:あ」の順番で出力される。
+```php
 <?php
     $array[3] = 'あ';
     $array[2] = 'い';
@@ -126,5 +146,6 @@ config:{"ngFeedback":"PHPは、添え字が数字の配列でも、結局全く�
            print $key . ":" . $value . "\n";
         }
 ?>
+```
 anSwer:FALSE
 

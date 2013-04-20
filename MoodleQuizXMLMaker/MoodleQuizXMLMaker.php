@@ -65,6 +65,8 @@ class MoodleQuizXMLMaker
     public function makeXML($markdown)
     {
         $xml = "";
+        $category = $this->beans[0]->getConfig()->category;
+
         foreach ($this->beans as $bean) {
             try {
                 $xml .= $this->parsers[$bean->getConfig()->type]->xmlWrite($bean, $markdown);
@@ -74,7 +76,17 @@ class MoodleQuizXMLMaker
                 throw $e;
             }
         }
-        return $xml;
+        $root = "<quiz>\n";
+        $root .= "\t<question type=\"category\">\n";
+        $root .="\t\t<category>\n";
+        $root .="\t\t\t<text>";
+        $root .= $category;
+        $root .="</text>\n";
+        $root .="\t\t</category>\n";
+        $root .= "\t</question>\n";
+        $root .= $xml;
+        $root .= "</quiz>\n";
+        return $root;
     }
 
     /**

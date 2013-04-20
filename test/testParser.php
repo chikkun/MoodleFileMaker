@@ -206,12 +206,14 @@ EOF;
         $this->assertEquals('合格', $configs[0]->getConfig()->okFeedback);
         $text =<<<'EOF'
 PHPにおいて、if文の中で使った変数は外でも参照できる(下のechoで「inside if」が出力される)。
+```php
 <?php
     if(true) {
         $flag = "inside if";
     }
     echo $flag."\n";
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[0]->getQuestion());
         $this->assertEquals('t', $configs[0]->getAnswer());
@@ -225,6 +227,7 @@ EOF;
         $this->assertEquals('合格', $configs[1]->getConfig()->okFeedback);
         $text =<<<'EOF'
 下のコードを実行すると、「false」が出力される。
+```php
 <?php
     $foo = "0";
     if ($foo == 0) {
@@ -233,6 +236,7 @@ EOF;
         echo "false";
     }
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[1]->getQuestion());
         $this->assertEquals('F', $configs[1]->getAnswer());
@@ -246,6 +250,7 @@ EOF;
         $this->assertEquals('合格', $configs[2]->getConfig()->okFeedback);
         $text =<<<'EOF'
 下のコードを実行すると、「true」が出力される。
+```php
 <?php
     $foo = "test";
     if ($foo == 0) {
@@ -254,6 +259,7 @@ EOF;
         echo "false";
     }
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[2]->getQuestion());
         $this->assertEquals('T', $configs[2]->getAnswer());
@@ -267,6 +273,7 @@ EOF;
         $this->assertEquals('成長しましたねｗ', $configs[3]->getConfig()->okFeedback);
         $text =<<<'EOF'
 配列にその値が存在するかどうかを判定する関数「in_array」を使った下のコードを実行すると、「true」が出力される。
+```php
 <?php
     $str_array = array('a', 'b', 'c');
     if (in_array(0, $str_array)) {
@@ -275,6 +282,7 @@ EOF;
         echo "false";
     }
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[3]->getQuestion());
         $this->assertEquals('t', $configs[3]->getAnswer());
@@ -288,6 +296,7 @@ EOF;
         $this->assertEquals('成長しましたねｗ', $configs[4]->getConfig()->okFeedback);
         $text =<<<'EOF'
 下のコードを実行すると、nullが表示されます。
+```php
 <?php
     $noodles = array(
         'udon' => 'white',
@@ -296,6 +305,7 @@ EOF;
     );
     echo $noodles['udon']['color'] . "\n";
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[4]->getQuestion());
         $this->assertEquals('f', $configs[4]->getAnswer());
@@ -309,6 +319,7 @@ EOF;
         $this->assertEquals('成長しましたねｗ', $configs[5]->getConfig()->okFeedback);
         $text =<<<'EOF'
 下のコードを実行すると、trueが表示されます。
+```php
 <?php
     $noodles = array(
         'udon' => 'white',
@@ -321,6 +332,7 @@ EOF;
         echo "false\n";
     }
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[5]->getQuestion());
         $this->assertEquals('FaLse', $configs[5]->getAnswer());
@@ -334,6 +346,7 @@ EOF;
         $this->assertEquals('成長しましたねｗ', $configs[6]->getConfig()->okFeedback);
         $text =<<<'EOF'
 下のコードを実行すると、「2」が出力される。
+```php
 <?php
    function test($array){
       $array[0] = 2;
@@ -342,6 +355,7 @@ EOF;
    test($array);
    echo $array[0];
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[6]->getQuestion());
         $this->assertEquals('F', $configs[6]->getAnswer());
@@ -355,6 +369,7 @@ EOF;
         $this->assertEquals('成長しましたねｗ', $configs[7]->getConfig()->okFeedback);
         $text =<<<'EOF'
 下のコードを実行すると、「bowbow」が出力される。
+```php
 <?php
     class Hoge{
         public $dog = "wanwan";
@@ -367,6 +382,7 @@ EOF;
    test($h);
    echo $h->dog;
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[7]->getQuestion());
         $this->assertEquals('True', $configs[7]->getAnswer());
@@ -380,6 +396,7 @@ EOF;
         $this->assertEquals('成長しましたねｗ', $configs[8]->getConfig()->okFeedback);
         $text =<<<'EOF'
 PHPの連想配列は順番が保証されている。例えば、次のコードを実行すると、「key1:val1→key2:val2→key3:val3」の順番で出力される。
+```php
 <?php
     $hash['key1'] = 'val1';
     $hash['key2'] = 'val2';
@@ -388,6 +405,7 @@ PHPの連想配列は順番が保証されている。例えば、次のコー�
         print $key . ":" . $value . "\n";
     }
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[8]->getQuestion());
         $this->assertEquals('TRUE', $configs[8]->getAnswer());
@@ -397,10 +415,12 @@ EOF;
         $this->assertEquals('PHP', $configs[9]->getConfig()->category);
         $this->assertEquals('問', $configs[9]->getConfig()->name);
         $this->assertEquals('お疲れ', $configs[9]->getConfig()->commonFeedback);
-        $this->assertEquals('PHPは、添え字が数字の配列でも、結局全く前問の連想配列と同じ扱いで、入れた順を覚えています。', $configs[9]->getConfig()->ngFeedback);
+        $this->assertEquals("PHPは、添え字が数字の配列でも、結局全く前問の連想配列と同じ扱いで、入れた順を覚えています。\nちょっとおかしな感じがしますｗ", $configs[9]->getConfig()->ngFeedback);
         $this->assertEquals('成長しましたねｗ', $configs[9]->getConfig()->okFeedback);
         $text =<<<'EOF'
-例えば、次のコードを実行すると、「0:え→1:う→2:い→3:あ」の順番で出力される。
+例えば、次のコードを実行すると、
+「0:え→1:う→2:い→3:あ」の順番で出力される。
+```php
 <?php
     $array[3] = 'あ';
     $array[2] = 'い';
@@ -410,6 +430,7 @@ EOF;
            print $key . ":" . $value . "\n";
         }
 ?>
+```
 EOF;
         $this->assertEquals($text, $configs[9]->getQuestion());
         $this->assertEquals('FALSE', $configs[9]->getAnswer());

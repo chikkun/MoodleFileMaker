@@ -55,5 +55,5 @@ abstract class AbstractParser {
      * データを読み込んで、MoodleのXML形式で問題を作成する準備をする。
      * 具体的には問題ビーンを配列に入れ込む。
      */
-    abstract public function xmlWrite($beans);
+    abstract public function xmlWrite($bean, $markdown);
 }
