@@ -114,7 +114,7 @@ class MoodleQuizXMLMaker
     private function checkContents($contents)
     {
         //最後の行は削除(次のsplitで空のレコードが出来ることを避ける)
-        $str = preg_replace('/\n+$/', '', $contents);
+        $str = preg_replace('/\n+$/s', '', $contents);
         //空行で分割(2行でも同じ)
         $array = preg_split('/\n\n+/', $str);
         $this->qNumber = count($array);

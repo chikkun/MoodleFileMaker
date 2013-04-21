@@ -33,8 +33,43 @@ class TorFParser extends \Parser\AbstractParser
     {
 
     }
-
-
+    /**
+     * スタンダードなMarkdownに以下のようないくつかのGFM(Github Flavoured Markdown)
+     * を加えた仕様で、HTMLに変換する。
+     * <ul>
+     *   <li>http://www.chikkun.com等のURLは自動でリンクにする。
+     *   <li>「```php〜```」でコードのhighlightを付ける。
+     *   <li>改行(空行ではない)が、そのまま段落になる。
+     * </ul>
+     * @param string $text 変換前のもの
+     * @return string htmlに変換したもの
+     */
+    private function gfm($text){
+        $text = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $text);
+        $text = preg_replace("/```+/s", "\n~~~\n\n", $text);
+        $lines = preg_split("/\n/", $text);
+        $text = "";
+        $flg = 0;
+        foreach($lines as $ln){
+            if(preg_match("/^~~~+/", $ln)){
+                if($flg === 0){
+                    $flg = 1;
+                } else {
+                    $flg = 0;
+                }
+            } else if(preg_match("/^[ \t]+$/", $ln)){
+                $ln = "";
+            }
+            $ln = preg_replace("/[^\(]*((?:https?|ftp):\/\/[-_.!~*\'\(\)a-zA-Z0-9;\/?:\@&=+\$,%#]+)\b/", "[$0]($0)", $ln);
+            if($flg === 0){
+                $text .= $ln . "\n\n";
+            } else {
+                $text .= $ln . "\n";
+            }
+        }
+        $text = beautify($text);
+        return $text;
+    }
     /**
      * 真偽問題のXMLを作る。
      * @param $bean        一つの問題を表すbean。
@@ -81,10 +116,7 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_start_element($writer, "text");
             $text = $bean->getQuestion();
             if($markdown === 1){
-                $text = preg_replace("/\n/s", "\n\n", $text);
-                $text = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $text);
-                $text = preg_replace("/```+/s", "\n~~~\n\n", $text);
-                $text = beautify($text);
+                $text = $this->gfm($text);
             }
             xmlwriter_write_cdata($writer, $text );
             xmlwriter_end_element($writer);
@@ -98,10 +130,7 @@ class TorFParser extends \Parser\AbstractParser
         } else {
             $cfeed = $config->commonFeedback;
             if($markdown === 1){
-                $cfeed = preg_replace("/\n/s", "\n\n", $cfeed);
-                $cfeed = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $cfeed);
-                $cfeed = preg_replace("/```+/s", "\n~~~\n\n", $cfeed);
-                $cfeed = beautify($cfeed);
+                $cfeed = $this->gfm($cfeed);
             }
             xmlwriter_write_cdata($writer, $config->commonFeedback);
         }
@@ -134,10 +163,7 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_text($writer, "");
         } else {
             if($markdown === 1){
-                $t_feedback = preg_replace("/\n/s", "\n\n", $t_feedback);
-                $t_feedback = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $t_feedback);
-                $t_feedback = preg_replace("/```+/s", "\n~~~\n\n", $t_feedback);
-                $t_feedback = beautify($t_feedback);
+                $t_feedback = $this->gfm($t_feedback);
             }
             xmlwriter_write_cdata($writer, $t_feedback );
         }
@@ -159,10 +185,7 @@ class TorFParser extends \Parser\AbstractParser
             xmlwriter_text($writer, "");
         } else {
             if($markdown === 1){
-                $f_feedback = preg_replace("/\n/s", "\n\n", $f_feedback);
-                $f_feedback = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $f_feedback);
-                $f_feedback = preg_replace("/```+/s", "\n~~~\n\n", $f_feedback);
-                $f_feedback = beautify($f_feedback);
+                $f_feedback = $this->gfm($f_feedback);
             }
             xmlwriter_write_cdata($writer, $f_feedback );
         }

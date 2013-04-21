@@ -31,6 +31,7 @@ class QuizParserFactory {
             case preg_match("/multichoice/i", $kind);
                 break;
             case preg_match("/description/i", $kind);
+                return new \Parser\DescriptionParser();
                 break;
             default:
                 throw new \Exception("Quiz kind not recognized at making parser!");
@@ -57,7 +58,7 @@ class QuizParserFactory {
                 break;
             case preg_match("/description/i", $kind);
                 // 暫定TODO
-                return new \Bean\TorFBean();
+                return new \Bean\DescriptionBean();
                 break;
             default:
                 throw new \Exception("Quiz kind not recognized  at making bean!");

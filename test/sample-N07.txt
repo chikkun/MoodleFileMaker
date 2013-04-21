@@ -1,0 +1,51 @@
+config:{"type":"desc", "category":"PHP", "name":"PHPの変数の説明", "commonFeedback":"お疲れ"}
+#Beautify
+~~~ ruby
+puts 'hello world'
+~~~
+  
+sakai
+  
+~~~ javascript
+$('#result').html('waiting...');
+  
+var promise = wait();
+promise.done(result);
+  
+function result() {
+  $('#result').html('done');
+}
+  
+function wait() {
+  var deferred = $.Deferred();
+
+  setTimeout(function() {
+    deferred.resolve();
+  }, 2000);
+
+  return deferred.promise();
+}
+~~~
+  
+  
+| header 1 | header 2 |
+| -------- | -------- |
+| cell 1   | cell 2   |
+| cell 3   | cell 4   |
+
+
+http://www.chikkun.com
+
+perform_complicated_task
+do_this_and_do_that_and_another_thing
+
+http://www.chikkun.com
+
+[sakai](http://www.chikkun.com)
+
+
+
+- [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
+- [x] list syntax required (any unordered or ordered list supported)
+- [x] this is a complete item
+- [ ] this is an incomplete item
