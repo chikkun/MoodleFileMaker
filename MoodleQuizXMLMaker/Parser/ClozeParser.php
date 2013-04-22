@@ -13,8 +13,8 @@ require_once "AbstractParser.php";
 require_once "../Beautify/beautify.php";
 
 /**
- * 説明(Description)のXMLを作る。
- * Class DescriptionParser
+ * cloze問題のXMLを作る。
+ * Class ClozeParser
  * @package Parser
  */
 class ClozeParser extends \Parser\AbstractParser
@@ -51,7 +51,6 @@ class ClozeParser extends \Parser\AbstractParser
         $text = "";
         $flg = 0;
 
-
         foreach ($lines as $ln) {
             if (preg_match("/^~~~+/", $ln)) {
                 if ($flg === 0) {
@@ -73,10 +72,9 @@ class ClozeParser extends \Parser\AbstractParser
     }
 
     /**
-     * 真偽問題のXMLを作る。
+     * cloze問題のXMLを作る。
      * @param $bean        一つの問題を表すbean。
      * @return string      問題をXMLの書式で表した文字列を返す。
-     * @throws \Exception　answer が 'T' 'F' 'true' 'false' のいずれでもないときにエラーを返す。
      */
     public function xmlWrite($bean, $markdown)
     {

@@ -73,10 +73,9 @@ class DescriptionParser extends \Parser\AbstractParser
     }
 
     /**
-     * 真偽問題のXMLを作る。
+     * 説明のXMLを作る。
      * @param $bean        一つの問題を表すbean。
      * @return string      問題をXMLの書式で表した文字列を返す。
-     * @throws \Exception　answer が 'T' 'F' 'true' 'false' のいずれでもないときにエラーを返す。
      */
     public function xmlWrite($bean, $markdown)
     {
