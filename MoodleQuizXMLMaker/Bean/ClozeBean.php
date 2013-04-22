@@ -9,7 +9,7 @@
 
 namespace Bean;
 
-class TorFBean extends AbstractBean
+class ClozeBean extends AbstractBean
 {
 
     private $config; //stdClass

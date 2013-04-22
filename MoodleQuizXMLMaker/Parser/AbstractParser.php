@@ -18,38 +18,6 @@ namespace Parser;
  */
 abstract class AbstractParser {
     private $defaultOption;
-
-    /*
-    <question type="truefalse">
-        <name>
-          <text>問1</text>
-        </name>
-        <questiontext format="html">
-          <text><![CDATA[<p>CoffeeScriptは美味しい。</p>]]></text>
-        </questiontext>
-        <generalfeedback format="html">
-          <text><![CDATA[<p>CoffeeScriptは飲めませんよねｗ</p>]]></text>
-        </generalfeedback>
-        <defaultgrade>1.0000000</defaultgrade>
-        <penalty>1.0000000</penalty>
-        <hidden>0</hidden>
-        <answer fraction="0" format="moodle_auto_format">
-          <text>true</text>
-          <feedback format="html">
-            <text><![CDATA[<p>正解！</p>]]></text>
-          </feedback>
-        </answer>
-        <answer fraction="100" format="moodle_auto_format">
-          <text>false</text>
-          <feedback format="html">
-            <text><![CDATA[<p>はずれ！</p>]]></text>
-          </feedback>
-        </answer>
-        <tags>
-          <tag><text>JacaScript</text></tag></tags>
-      </question>
-
-     */
     /**
      * @return mixed
      * データを読み込んで、MoodleのXML形式で問題を作成する準備をする。
