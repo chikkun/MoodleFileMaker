@@ -5,39 +5,56 @@ require_once "../beautify.php";
 //$file = file_get_contents("example.md");
 
 $string = <<<EOF
-#Beautify
-~~~ ruby
-puts 'hello world'
+# PHPの最初の最初
+
+## 雑多のこと
+
+まずは、文法などの解説の前に、少し予備知識を付けておきましょう。
+
+PHPは1995年に産声を上げて、1998年にはPHP 3.0が公開され、ちょうどインターネットの普及に伴い、多くのプログラマーに利用されるようになりました。
+
+2013年現在、PHP 5.4がリリースされています。
+
+## コーディングスタイル
+
+* PEAR標準コーディング規約
+
+* WordPress コーディング基準
+
+* Zend Framework PHP 標準コーディング規約
+
+など、色々あり、しかも言っていることが相当違います。例えば、Zendでは変数名などではキャメルスタイル(userProfileなど)を使いなさいと言い、WordPressではアンダースコア(user_profile)を使え、など真っ向から対立している場合もあります(その他に、タブを使えとか、スペースを使えとか色々違います)。
+
+すなわち、結局の所、この辺の規約を読んで、好きなようにすれば良い、ということになりそうです。ただ首尾一貫しないと読みづらいものになるので、好きなものを見つけて、自分なりのスタイルを構築しましょう!
+
+## スクリプト言語
+
+PHPは、CやC++と違い、実行するためにコンパイル(機械語への変換作業)を行う必要がないスクリプト言語です。
+
+
+~~~ php
+
+<?php
+    echo "Hello World, baby!"
+?>
+
 ~~~
 
-sakai
 
-~~~ javascript
-$('#result').html('waiting...');
+上記のような内容(行番号は除く)のファイル(hello.php)を用意し、Windowsであれば「スタートボタン→アクセサリー→コマンドプロンプト」でDos窓を開き、PHPにパスが通っていれば、
 
-var promise = wait();
-promise.done(result);
 
-function result() {
-  $('#result').html('done');
-}
+~~~ bash
 
-function wait() {
-  var deferred = $.Deferred();
+php hello.php
 
-  setTimeout(function() {
-    deferred.resolve();
-  }, 2000);
-
-  return deferred.promise();
-}
 ~~~
 
 
-| header 1 | header 2 |
-| -------- | -------- |
-| cell 1   | cell 2   |
-| cell 3   | cell 4   |
+を入力して、実行すれば、「Hello World, baby!」が表示されます。
+
+お疲れさま
+
 EOF;
 
 

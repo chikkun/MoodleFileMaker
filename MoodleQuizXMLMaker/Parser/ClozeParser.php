@@ -23,7 +23,7 @@ class ClozeParser extends \Parser\AbstractParser
         "category" => "ルート",
         "name" => "問",
         "defaultgrade" => "1.0000000",
-        "penalty" => "1.0000000",
+        "penalty" => "0",
         "hidden" => "0",
         "commonFeedback" => "");
 
@@ -32,6 +32,47 @@ class ClozeParser extends \Parser\AbstractParser
 
     }
 
+    private function convert_cloze($text){
+        preg_match_all("/\(\((.+?)\)\)/", $text, $multis);
+        foreach($multis[1] as $m){
+            if(preg_match("/\|/", $m)){
+                $choices = preg_split("/\|/", $m);
+                $ans = $choices[0];
+                shuffle($choices);
+                $txt = "";
+                $n = 0;
+                foreach($choices as $c){
+                    $n++;
+                    if(preg_match("/[^\\\\]#/", $c)){
+                        $sharps = preg_split("/#/", $c);
+                        $sharps[1] = htmlentities($sharps[1]);
+                        $c = implode("#", $sharps);
+                    }
+                    $c = preg_replace("/([~". preg_quote('"}{') ."])/", "\\\\\$1", $c);
+                    $c = preg_replace("{([~". preg_quote('/') ."])}", "\\\\\$1", $c);
+                    if($c === $ans){
+                        $txt .= "=".$c;
+                    } else {
+                        if($n !== 1){
+                            $txt .= "~".$c;
+                        } else {
+                            $txt .= $c;
+                        }
+                    }
+                }
+                $txt = "{1:MULTICHOICE:" . $txt . "}";
+            } else {
+                $txt = "";
+                if(preg_match("/^[\d\.]+$/", $m)){
+                    $txt .= "{1:NUMERICAL:=" . $m . "}";
+                } else {
+                    $txt .= "{1:SHORTANSWER:=" . $m . "}";
+                }
+            }
+            $text = preg_replace("{".preg_quote("((".$m."))") . "}", $txt, $text);
+        }
+        return $text;
+    }
     /**
      * スタンダードなMarkdownに以下のようないくつかのGFM(Github Flavoured Markdown)
      * を加えた仕様で、HTMLに変換する。
@@ -45,6 +86,7 @@ class ClozeParser extends \Parser\AbstractParser
      */
     private function gfm($text)
     {
+        $text = $this->convert_cloze($text);
         $text = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $text);
         $text = preg_replace("/```+/s", "\n~~~\n\n", $text);
         $lines = preg_split("/\n/", $text);
@@ -62,7 +104,7 @@ class ClozeParser extends \Parser\AbstractParser
                 $ln = "";
             }
             $ln = preg_replace("/[^\(]*((?:https?|ftp):\/\/[-_.!~*\'\(\)a-zA-Z0-9;\/?:\@&=+\$,%#]+)\b/", "[$0]($0)", $ln);
-            if ($flg === 1 || preg_match("/^|.+|/", $ln)) {
+            if ($flg === 1 || preg_match("/^\|.+\|/", $ln)) {
                 $text .= $ln . "\n";
             } else {
                 $text .= $ln . "\n\n";

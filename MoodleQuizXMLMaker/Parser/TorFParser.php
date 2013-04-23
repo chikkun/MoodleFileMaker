@@ -61,10 +61,10 @@ class TorFParser extends \Parser\AbstractParser
                 $ln = "";
             }
             $ln = preg_replace("/[^\(]*((?:https?|ftp):\/\/[-_.!~*\'\(\)a-zA-Z0-9;\/?:\@&=+\$,%#]+)\b/", "[$0]($0)", $ln);
-            if($flg === 0){
-                $text .= $ln . "\n\n";
-            } else {
+            if($flg === 1  || preg_match("/^\|.+\|/", $ln)){
                 $text .= $ln . "\n";
+            } else {
+                $text .= $ln . "\n\n";
             }
         }
         $text = beautify($text);

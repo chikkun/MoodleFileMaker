@@ -45,8 +45,8 @@ class DescriptionParser extends \Parser\AbstractParser
      */
     private function gfm($text)
     {
-        $text = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $text);
-        $text = preg_replace("/```+/s", "\n~~~\n\n", $text);
+        $text = preg_replace("/```+/s", "~~~ ", $text);
+        //$text = preg_replace("/```+/s", "\n~~~n", $text);
         $lines = preg_split("/\n/", $text);
         $text = "";
         $flg = 0;
@@ -59,16 +59,19 @@ class DescriptionParser extends \Parser\AbstractParser
                 } else {
                     $flg = 0;
                 }
+                $ln = "\n" . $ln . "\n";
             } else if(preg_match("/^[ \t]+$/", $ln)){
                 $ln = "";
             }
             $ln = preg_replace("/[^\(]*((?:https?|ftp):\/\/[-_.!~*\'\(\)a-zA-Z0-9;\/?:\@&=+\$,%#]+)\b/", "[$0]($0)", $ln);
-            if ($flg === 1 || preg_match("/^|.+|/", $ln)) {
+            if ($flg === 1 || preg_match("/^\|.+\|/", $ln)) {
                 $text .= $ln . "\n";
             } else {
                 $text .= $ln . "\n\n";
             }
         }
+//        echo $text;
+        //eval($text);
         return beautify($text);
     }
 
