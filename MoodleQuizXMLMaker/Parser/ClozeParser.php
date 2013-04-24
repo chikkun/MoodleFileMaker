@@ -87,8 +87,8 @@ class ClozeParser extends \Parser\AbstractParser
     private function gfm($text)
     {
         $text = $this->convert_cloze($text);
-        $text = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $text);
-        $text = preg_replace("/```+/s", "\n~~~\n\n", $text);
+        $text = preg_replace("/```+/s", "~~~", $text);
+        //$text = preg_replace("/```+/s", "\n~~~\n\n", $text);
         $lines = preg_split("/\n/", $text);
         $text = "";
         $flg = 0;
@@ -130,7 +130,7 @@ class ClozeParser extends \Parser\AbstractParser
 
 // 一つのbean ここから
         xmlwriter_start_element($writer, "question");
-        xmlwriter_write_attribute($writer, "type", "description");
+        xmlwriter_write_attribute($writer, "type", "cloze");
             xmlwriter_start_element($writer, "name");
                 xmlwriter_start_element($writer, "text");
                 xmlwriter_text($writer, "$config->name");
