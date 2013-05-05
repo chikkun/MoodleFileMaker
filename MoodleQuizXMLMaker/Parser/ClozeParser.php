@@ -35,8 +35,8 @@ class ClozeParser extends \Parser\AbstractParser
     private function convert_cloze($text){
         preg_match_all("/\(\((.+?)\)\)/", $text, $multis);
         foreach($multis[1] as $m){
-            if(preg_match("/\|/", $m)){
-                $choices = preg_split("/\|/", $m);
+            if(preg_match("/(?<!\\\\)\|/", $m)){
+                $choices = preg_split("/(?<!\\\\)\|/", $m);
                 $ans = $choices[0];
                 shuffle($choices);
                 $txt = "";
@@ -44,7 +44,7 @@ class ClozeParser extends \Parser\AbstractParser
                 foreach($choices as $c){
                     $n++;
                     if(preg_match("/[^\\\\]#/", $c)){
-                        $sharps = preg_split("/#/", $c);
+                        $sharps = preg_split("/(?<!\\\\)#/", $c);
                         $sharps[1] = htmlentities($sharps[1]);
                         $c = implode("#", $sharps);
                     }
