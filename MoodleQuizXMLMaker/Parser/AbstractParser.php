@@ -4,7 +4,6 @@
  * User: chikkun
  * Date: 2013/03/16
  * Time: 13:53
- * To change this template use File | Settings | File Templates.
  */
 
 namespace Parser;
@@ -16,6 +15,7 @@ require_once "../Beautify/beautify.php";
  * @package parser
  * 問題形式毎にパースする方法が違うので、共通したものを入れ込む
  * 抽象クラス.
+ * protectedのgfmは実装(Github Fravoured Markdown)。
  */
 abstract class AbstractParser {
     private $defaultOption;

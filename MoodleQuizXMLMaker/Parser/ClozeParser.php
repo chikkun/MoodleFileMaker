@@ -10,7 +10,6 @@
 namespace Parser;
 
 require_once "AbstractParser.php";
-require_once "../Beautify/beautify.php";
 
 /**
  * cloze問題のXMLを作る。
@@ -20,7 +19,7 @@ require_once "../Beautify/beautify.php";
 class ClozeParser extends \Parser\AbstractParser
 {
     private $defaultOption = array(
-        "category" => "ルート",
+        "category" => "\$system\$/システム のデフォルト",
         "name" => "問",
         "defaultgrade" => "1.0000000",
         "penalty" => "0",

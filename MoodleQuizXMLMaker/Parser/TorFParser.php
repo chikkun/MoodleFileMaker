@@ -20,7 +20,7 @@ require_once "../Beautify/beautify.php";
 class TorFParser extends \Parser\AbstractParser
 {
     private $defaultOption = array(
-        "category" => "ルート",
+        "category" => "\$system\$/システム のデフォルト",
         "name" => "問",
         "defaultgrade" => "1.0000000",
         "penalty" => "1.0000000",
@@ -29,6 +29,9 @@ class TorFParser extends \Parser\AbstractParser
         "ngFeedback" => "",
         "okFeedback" => "");
 
+    /**
+     *
+     */
     public function __constructor()
     {
 
@@ -48,17 +51,40 @@ class TorFParser extends \Parser\AbstractParser
         xmlwriter_set_indent_string($writer, "\t");
             $config = $bean->getConfig();
             $config = \Utility\UtilityStatics::mergeLargerToSmaller($config, $this->defaultOption);
-
-            if (preg_match('/^T$|^true$/i', $bean->getAnswer())) {
+            //#間違っているフィードバック#あっていた時のフィードバック
+            if (preg_match('/^T$|^true$|^true\#.+$|^t\#.+$/i', $bean->getAnswer())) {
                 $t_fraction = 100;
-                $t_feedback = $config->okFeedback;
+                if(preg_match('/^true\#(.+)$|^T\#(.+)$/i', $bean->getAnswer(), $matches)){
+                    if(preg_match("/[^\\\\]\#/", $matches[1])){
+                        $feeds = preg_split("/[^\\\\]\#/",$matches[1]);
+                        $t_feedback = $feeds[1];
+                        $f_feedback = $feeds[0];
+                    } else {
+                        $t_feedback = "";
+                        $f_feedback = $matches[1];
+                    }
+                } else {
+                    $t_feedback = $config->okFeedback;
+                    $f_feedback = $config->ngFeedback;
+                }
                 $f_fraction = 0;
-                $f_feedback = $config->ngFeedback;
-            } else if (preg_match('/^F$|^false$/i', $bean->getAnswer())) {
+            } else if (preg_match('/^F$|^false$|^false\#.+$|^F\#.+$/i', $bean->getAnswer())) {
+                if(preg_match('/^false\#(.+)$|^F\#(.+)$/i', $bean->getAnswer(), $matches)){
+                    if(preg_match("/[^\\\\]\#/", $matches[1])){
+                        $feeds = preg_split("/[^\\\\]\#/",$matches[1]);
+                        $t_feedback = $feeds[0];
+                        $f_feedback = $feeds[1];
+                    } else {
+                        $t_feedback = $matches[1];
+                        $f_feedback = "";
+                    }
+                } else {
+                    $t_feedback = $config->ngFeedback;
+                    $f_feedback = $config->okFeedback;
+                }
+
                 $t_fraction = 0;
-                $t_feedback = $config->ngFeedback;
                 $f_fraction = 100;
-                $f_feedback = $config->okFeedback;
             } else {
                 //errer
                 throw new \Exception("Answer must be \"T\" or \"F\" ,\"true\" or \"false\" !");

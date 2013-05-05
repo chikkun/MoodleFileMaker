@@ -39,10 +39,10 @@ class TorFParserTest extends \PHPUnit_Framework_TestCase
         $bean1 = new \Bean\TorFBean();
         $bean1->setConfig(json_decode('{"type":"TorF", "category":"初級 のデフォルト", "name":"問"}'));
         $bean1->setQuestion("Java Teaはとても美味しい。");
-        $bean1->setAnswer("true");
+        $bean1->setAnswer("true#実際美味しいんだよ。#Good!");
 
         $parser = $factory->create("truefalse");
-        $xml = $parser->xmlWrite($bean0);
+        $xml = $parser->xmlWrite($bean1, 1);
         echo $xml;
     }
 
@@ -63,7 +63,7 @@ class TorFParserTest extends \PHPUnit_Framework_TestCase
         $bean1->setAnswer("true");
 
         $parser = $factory->create("truefalse");
-        $xml = $parser->xmlWrite($bean1);
+        $xml = $parser->xmlWrite($bean1,1);
         //$this->assertEquals();
         echo $xml;
     }

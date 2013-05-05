@@ -20,7 +20,7 @@ require_once "../Beautify/beautify.php";
 class DescriptionParser extends \Parser\AbstractParser
 {
     private $defaultOption = array(
-        "category" => "ルート",
+        "category" => "\$system\$/システム のデフォルト",
         "name" => "問",
         "defaultgrade" => "1.0000000",
         "penalty" => "1.0000000",
