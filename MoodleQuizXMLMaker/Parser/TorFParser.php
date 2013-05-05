@@ -34,43 +34,6 @@ class TorFParser extends \Parser\AbstractParser
 
     }
     /**
-     * スタンダードなMarkdownに以下のようないくつかのGFM(Github Flavoured Markdown)
-     * を加えた仕様で、HTMLに変換する。
-     * <ul>
-     *   <li>http://www.chikkun.com等のURLは自動でリンクにする。
-     *   <li>「```php〜```」でコードのhighlightを付ける。
-     *   <li>改行(空行ではない)が、そのまま段落になる。
-     * </ul>
-     * @param string $text 変換前のもの
-     * @return string htmlに変換したもの
-     */
-    private function gfm($text){
-        $text = preg_replace("/```+(.*?)\n/s", "\n\n~~~ $1\n", $text);
-        $text = preg_replace("/```+/s", "\n~~~\n\n", $text);
-        $lines = preg_split("/\n/", $text);
-        $text = "";
-        $flg = 0;
-        foreach($lines as $ln){
-            if(preg_match("/^~~~+/", $ln)){
-                if($flg === 0){
-                    $flg = 1;
-                } else {
-                    $flg = 0;
-                }
-            } else if(preg_match("/^[ \t]+$/", $ln)){
-                $ln = "";
-            }
-            $ln = preg_replace("/[^\(]*((?:https?|ftp):\/\/[-_.!~*\'\(\)a-zA-Z0-9;\/?:\@&=+\$,%#]+)\b/", "[$0]($0)", $ln);
-            if($flg === 1  || preg_match("/^\|.+\|/", $ln)){
-                $text .= $ln . "\n";
-            } else {
-                $text .= $ln . "\n\n";
-            }
-        }
-        $text = beautify($text);
-        return $text;
-    }
-    /**
      * 真偽問題のXMLを作る。
      * @param $bean        一つの問題を表すbean。
      * @return string      問題をXMLの書式で表した文字列を返す。
