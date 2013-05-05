@@ -27,6 +27,7 @@ class QuizParserFactory {
                 return new \Parser\ClozeParser();
                 break;
             case preg_match("/shortanswer/i", $kind);
+                return new \Parser\ShortAnswerParser();
                 break;
             case preg_match("/multichoice/i", $kind);
                 break;
@@ -50,7 +51,7 @@ class QuizParserFactory {
                 break;
             case preg_match("/shortanswer/i", $kind);
                 // 暫定TODO
-                return new \Bean\TorFBean();
+                return new \Bean\ShortAnswerBean();
                 break;
             case preg_match("/multichoice/i", $kind);
                 // 暫定TODO

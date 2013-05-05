@@ -2,8 +2,8 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: chikkun
- * Date: 2013/03/16
- * Time: 17:19
+ * Date: 2013/05/04
+ * Time: 13:50
  * To change this template use File | Settings | File Templates.
  */
 
@@ -13,11 +13,12 @@ require_once "AbstractParser.php";
 require_once "../Beautify/beautify.php";
 
 /**
- * cloze問題のXMLを作る。
- * Class ClozeParser
+ * 記述問題(shortanswer)のXMLを作る。
+ * 当面fractionは100のみ対応。
+ * Class ShortAnswerParser
  * @package Parser
  */
-class ClozeParser extends \Parser\AbstractParser
+class ShortAnswerParser extends \Parser\AbstractParser
 {
     private $defaultOption = array(
         "category" => "ルート",
@@ -25,6 +26,9 @@ class ClozeParser extends \Parser\AbstractParser
         "defaultgrade" => "1.0000000",
         "penalty" => "0",
         "hidden" => "0",
+        "usecase" => "0",
+        "hint" => "",
+        "tag" => "",
         "commonFeedback" => "");
 
     public function __constructor()
@@ -32,47 +36,38 @@ class ClozeParser extends \Parser\AbstractParser
 
     }
 
-    private function convert_cloze($text){
-        preg_match_all("/\(\((.+?)\)\)/", $text, $multis);
-        foreach($multis[1] as $m){
-            if(preg_match("/\|/", $m)){
-                $choices = preg_split("/\|/", $m);
-                $ans = $choices[0];
-                shuffle($choices);
-                $txt = "";
-                $n = 0;
-                foreach($choices as $c){
-                    $n++;
-                    if(preg_match("/[^\\\\]#/", $c)){
-                        $sharps = preg_split("/#/", $c);
-                        $sharps[1] = htmlentities($sharps[1]);
-                        $c = implode("#", $sharps);
-                    }
-                    $c = preg_replace("/([~". preg_quote('"}{') ."])/", "\\\\\$1", $c);
-                    $c = preg_replace("{([~". preg_quote('/') ."])}", "\\\\\$1", $c);
-                    if($c === $ans){
-                        $txt .= "=".$c;
-                    } else {
-                        if($n !== 1){
-                            $txt .= "~".$c;
-                        } else {
-                            $txt .= $c;
-                        }
-                    }
-                }
-                $txt = "{1:MULTICHOICE:" . $txt . "}";
+    private function analyzeAnswers($text) {
+        $answers = array();
+        //答えが1つしかない
+        if(!preg_match("/(?<!\\\\)\|/", $text)){
+            $ans = new \Bean\Answer();
+            if(!preg_match("/(?<!\\\\)\#/", $text)){
+                $ans->setAnswer($text);
             } else {
-                $txt = "";
-                if(preg_match("/^[\d\.]+$/", $m)){
-                    $txt .= "{1:NUMERICAL:=" . $m . "}";
-                } else {
-                    $txt .= "{1:SHORTANSWER:=" . $m . "}";
-                }
+                $ansFeed = preg_split("/(?<!\\\\)\#/", $text);
+                $ans->setAnswer($ansFeed[0]);
+                $ans->setFeedback($ansFeed[1]);
             }
-            $text = preg_replace("{".preg_quote("((".$m."))") . "}", $txt, $text);
+            $answers[] = $ans;
+            return $answers;
         }
-        return $text;
+
+        $anses = preg_split("/(?<!\\\\)\|/", $text);
+        var_dump($anses);
+        foreach($anses as $a) {
+            $ans = new \Bean\Answer();
+            if(!preg_match("/(?<!\\\\)\#/", $a)){
+                $ans->setAnswer($a);
+            } else {
+                $ansFeed = preg_split("/(?<!\\\\)\#/", $a);
+                $ans->setAnswer($ansFeed[0]);
+                $ans->setFeedback($ansFeed[1]);
+            }
+            $answers[] = $ans;
+        }
+        return $answers;
     }
+
     /**
      * スタンダードなMarkdownに以下のようないくつかのGFM(Github Flavoured Markdown)
      * を加えた仕様で、HTMLに変換する。
@@ -86,7 +81,6 @@ class ClozeParser extends \Parser\AbstractParser
      */
     private function gfm($text)
     {
-        $text = $this->convert_cloze($text);
         $text = preg_replace("/```+/s", "~~~", $text);
         //$text = preg_replace("/```+/s", "\n~~~\n\n", $text);
         $lines = preg_split("/\n/", $text);
@@ -114,7 +108,7 @@ class ClozeParser extends \Parser\AbstractParser
     }
 
     /**
-     * cloze問題のXMLを作る。
+     * 記述問題(shortanswer)のXMLを作る。
      * @param $bean        一つの問題を表すbean。
      * @return string      問題をXMLの書式で表した文字列を返す。
      */
@@ -130,7 +124,7 @@ class ClozeParser extends \Parser\AbstractParser
 
 // 一つのbean ここから
         xmlwriter_start_element($writer, "question");
-        xmlwriter_write_attribute($writer, "type", "cloze");
+        xmlwriter_write_attribute($writer, "type", "shortanswer");
             xmlwriter_start_element($writer, "name");
                 xmlwriter_start_element($writer, "text");
                 xmlwriter_text($writer, "$config->name");
@@ -150,7 +144,7 @@ class ClozeParser extends \Parser\AbstractParser
 
             xmlwriter_start_element($writer, "generalfeedback");
             xmlwriter_write_attribute($writer, "format", "html");
-                xmlwriter_start_element($writer, "text");
+            xmlwriter_start_element($writer, "text");
         if ("" == $config->commonFeedback) {
             xmlwriter_text($writer, "");
         } else {
@@ -175,10 +169,58 @@ class ClozeParser extends \Parser\AbstractParser
             xmlwriter_text($writer, $config->hidden);
             xmlwriter_end_element($writer);
 
+            xmlwriter_start_element($writer, "usecase");
+            xmlwriter_text($writer, $config->usecase);
+            xmlwriter_end_element($writer);
+
+            $array = $this->analyzeAnswers($bean->getAnswer());
+            foreach($array as $a) {
+                xmlwriter_start_element($writer, "answer");
+                xmlwriter_write_attribute($writer, "fraction", $a->getFraction());
+                xmlwriter_write_attribute($writer, "format", "moodle_auto_format");
+                    xmlwriter_start_element($writer, "text");
+                    xmlwriter_text($writer, $a->getAnswer());
+                    xmlwriter_end_element($writer);
+
+                    xmlwriter_start_element($writer, "feedback");
+                    xmlwriter_write_attribute($writer, "format", "html");
+                    xmlwriter_write_cdata($writer, $this->gfm($a->getFeedback()));
+                    xmlwriter_end_element($writer);
+
+                xmlwriter_end_element($writer);
+            }
+        if(is_array($config->hint)){
+            foreach($config->hint as $h) {
+                xmlwriter_start_element($writer, "hint");
+                xmlwriter_write_attribute($writer, "format", "html");
+                xmlwriter_write_cdata($writer, $this->gfm($h));
+                xmlwriter_end_element($writer);
+            }
+        } else {
+            xmlwriter_start_element($writer, "hint");
+            xmlwriter_write_attribute($writer, "format", "html");
+            xmlwriter_write_cdata($writer, $this->gfm($config->hint));
+            xmlwriter_end_element($writer);
+        }
+        xmlwriter_start_element($writer, "tags");
+        if(is_array($config->tag) && !empty($config->tag)){
+            foreach($config->tag as $t) {
+                xmlwriter_start_element($writer, "tag");
+                xmlwriter_start_element($writer, "text");
+                    xmlwriter_text($writer, $t);
+                xmlwriter_end_element($writer);
+                xmlwriter_end_element($writer);
+            }
+        } else if(!empty($config->tag)){
+            xmlwriter_start_element($writer, "tag");
+            xmlwriter_start_element($writer, "text");
+            xmlwriter_write_cdata($writer, $config->tag);
+            xmlwriter_end_element($writer);
+            xmlwriter_end_element($writer);
+        }
         xmlwriter_end_element($writer);
 
-// 一つのbean ここまで
-
+        xmlwriter_end_element($writer);
         return xmlwriter_output_memory($writer);
     }
 
