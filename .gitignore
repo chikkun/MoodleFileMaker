@@ -7,3 +7,5 @@ tmp*
 Zend
 vendor
 #*
+Beautify
+log4php
