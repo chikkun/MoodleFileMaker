@@ -93,7 +93,7 @@ apache-log4php-2.3.0
 ```
 この「apache-log4php-2.3.0/src/main/php」というディレクトリーをlog4phpにリネームして、そのディレクトリーを%MoodleFileMaker%にコピーします。
 5. Zend Frameworkを http://framework.zend.com/downloads/latest からダウンロードし、解凍します。ただし、基本的にはAutoloader機能を使っているだけですので、解凍して出来た「Zend/Loader」ディレクトリだけで十分です。いずれにしろ、Zendディレクトリを%MoodleFileMaker%にコピーします。
-
+6. binディレクトリにパスを通しておくと便利かもしれません。
 
 ## ファイルのざっくりとした構成
 ```
